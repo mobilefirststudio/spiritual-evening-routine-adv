@@ -1,894 +1,784 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-<meta name="apple-mobile-web-app-title" content="Wedding Planner"/>
-<meta name="theme-color" id="meta-theme-color" content="#a4677a"/>
-<link rel="manifest" href="manifest.json"/>
-<link rel="apple-touch-icon" href="icon-192.png"/>
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png"/>
+<meta charset="UTF-8" />
+<title>Spiritual Evening Routine — Mobile First Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#e4e0f5" id="theme-color-meta" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://apis.google.com/js/api.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Lato:wght@300;400;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
-<title>Wedding Planner — Mobile First Studio</title>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-:root{
-  --hdr:#a4677a;--bg:#fdf6f3;--bg2:#ffffff;--bg3:#f9e9e4;
-  --text:#3a2228;--text2:#a07e88;--text3:#c8a8b0;
-  --accent:#c9963b;--accent2:#fbf0db;
-  --border:#f0d4d8;--border2:#f7e5e2;
-  --red:#b04545;--red2:#fbe8e8;
-  --shadow:0 1px 4px rgba(58,34,40,.08);
-}
-html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Lato',sans-serif;color:var(--text);}
-body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;height:100dvh;}
-.sbar{background:var(--hdr);padding:env(safe-area-inset-top,10px) 20px 8px;display:flex;justify-content:center;flex-shrink:0;}
-.sbar span{color:rgba(255,255,255,.55);font-size:13px;letter-spacing:.16em;font-family:'Cormorant Garamond',serif;font-style:italic;}
-.screen{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;}
-.page{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0;}
-.page.active{display:flex;}
-.ph{background:var(--hdr);padding:14px 20px 18px;flex-shrink:0;border-bottom:2px solid var(--accent);}
-.ph .ey{font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.55);text-transform:uppercase;margin-bottom:3px;font-family:'Lato',sans-serif;font-weight:700;}
-.ph h1{font-size:24px;font-weight:400;color:white;font-family:'Cormorant Garamond',serif;font-style:italic;}
-.ps{flex:1;overflow-y:auto;padding:16px 16px;min-height:0;-webkit-overflow-scrolling:touch;background:var(--bg);}
-.ps::-webkit-scrollbar{width:2px;}
-.ps::-webkit-scrollbar-thumb{background:var(--border);}
-.sl{font-size:11px;letter-spacing:.16em;color:var(--text2);text-transform:uppercase;margin-bottom:10px;margin-top:10px;font-family:'Lato',sans-serif;font-weight:700;}
-.nav{background:var(--bg2);border-top:.5px solid var(--border);padding:6px 0;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-around;flex-shrink:0;box-shadow:0 -1px 6px rgba(58,34,40,.06);}
-.ni{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 6px;border-radius:8px;background:none;border:none;min-width:44px;min-height:44px;justify-content:center;}
-.ni i{font-size:18px;color:var(--text3);}
-.ni span{font-size:9px;letter-spacing:.06em;color:var(--text3);text-transform:uppercase;font-family:'Cormorant Garamond',serif;}
-.ni.active i,.ni.active span{color:var(--hdr);}
-.card{background:var(--bg2);border-radius:12px;padding:14px 16px;margin-bottom:10px;border:.5px solid var(--border);box-shadow:var(--shadow);}
-.card-accent{background:var(--accent2);border-radius:12px;padding:14px 16px;margin-bottom:10px;border:.5px solid rgba(201,150,59,.25);}
-.card-hdr{background:var(--hdr);border-radius:12px;padding:16px 18px;margin-bottom:10px;}
-.fab{width:48px;height:48px;border-radius:50%;background:var(--hdr);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;position:fixed;bottom:calc(70px + env(safe-area-inset-bottom,0px));right:calc(50% - 220px + 16px);z-index:10;box-shadow:0 3px 12px rgba(58,34,40,.3);}
-@media(max-width:480px){.fab{right:16px;}}
-.fab i{font-size:22px;color:white;}
-.modal-bg{position:fixed;inset:0;background:rgba(58,34,40,.5);z-index:20;display:none;align-items:flex-end;max-width:480px;margin:0 auto;}
-.modal-bg.open{display:flex;}
-.modal{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:90vh;overflow-y:auto;border-top:2px solid var(--accent);padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));}
-.modal h2{font-size:21px;font-weight:400;color:var(--text);font-family:'Cormorant Garamond',serif;font-style:italic;margin-bottom:16px;}
-.field{margin-bottom:12px;}
-.field label{font-size:11px;letter-spacing:.12em;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px;font-family:'Lato',sans-serif;font-weight:700;}
-.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:.5px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:'Lato',sans-serif;font-size:16px;outline:none;-webkit-appearance:none;}
-.field input::placeholder,.field textarea::placeholder{color:var(--text3);font-style:italic;}
-.field select option{background:var(--bg2);color:var(--text);}
-.field textarea{resize:none;height:70px;}
-.btn-row{display:flex;gap:10px;margin-top:12px;}
-.btn-save{flex:1;background:var(--hdr);border:none;border-radius:10px;padding:13px;color:white;font-family:'Lato',sans-serif;font-size:16px;font-weight:700;cursor:pointer;min-height:48px;}
-.btn-cancel{flex:1;background:transparent;border:.5px solid var(--border);border-radius:10px;padding:13px;color:var(--text2);font-family:'Lato',sans-serif;font-size:16px;cursor:pointer;min-height:48px;}
-.btn-delete{width:100%;background:var(--red2);border:.5px solid var(--red);border-radius:10px;padding:13px;color:var(--red);font-family:'Lato',sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px;min-height:48px;}
-.btn-full{width:100%;background:var(--hdr);border:none;border-radius:10px;padding:13px;color:white;font-family:'Lato',sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:12px;min-height:48px;}
-.btn-ghost{width:100%;background:transparent;border:.5px dashed var(--border);border-radius:10px;padding:11px;color:var(--text2);font-family:'Lato',sans-serif;font-size:16px;cursor:pointer;margin-top:6px;min-height:44px;}
-.empty{text-align:center;padding:32px 0;color:var(--text2);font-size:16px;line-height:1.8;font-style:italic;font-family:'Cormorant Garamond',serif;}
-.section-div{height:.5px;background:var(--border2);margin:14px 0;}
-.row-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:.5px solid var(--border2);cursor:pointer;}
-.row-item:active{opacity:.7;}
-.row-info{flex:1;}
-.row-title{font-size:17px;color:var(--text);font-family:'Cormorant Garamond',serif;}
-.row-sub{font-size:13px;color:var(--text2);margin-top:2px;font-style:italic;}
-.tab-row{display:flex;gap:5px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px;}
-.tab-row::-webkit-scrollbar{display:none;}
-.tab-btn{flex:0 0 auto;background:var(--bg3);border:none;border-radius:8px;padding:7px 12px;color:var(--text2);font-family:'Lato',sans-serif;font-size:11px;font-weight:700;cursor:pointer;min-height:36px;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;}
-.tab-btn.active{background:var(--hdr);color:white;}
-/* COUNTDOWN HERO */
-.countdown-hero{background:linear-gradient(135deg,var(--hdr) 0%,color-mix(in srgb,var(--hdr) 80%,black) 100%);border-radius:16px;padding:22px 20px;margin-bottom:14px;text-align:center;}
-.countdown-num{font-size:48px;font-family:'Cormorant Garamond',serif;color:white;line-height:1;font-style:italic;}
-.countdown-label{font-size:12px;letter-spacing:.16em;color:rgba(255,255,255,.7);text-transform:uppercase;margin-top:4px;}
-.countdown-date{font-size:14px;color:rgba(255,255,255,.85);margin-top:10px;font-style:italic;font-family:'Cormorant Garamond',serif;}
-/* BUDGET BAR */
-.budget-bar-track{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin:8px 0;}
-.budget-bar-fill{height:100%;border-radius:5px;background:var(--accent);}
-.budget-bar-fill.over{background:var(--red);}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.stat-card{background:var(--bg2);border-radius:10px;padding:12px 14px;border:.5px solid var(--border);text-align:center;}
-.stat-num{font-size:22px;font-family:'Cormorant Garamond',serif;color:var(--hdr);font-style:italic;}
-.stat-label{font-size:10px;letter-spacing:.08em;color:var(--text2);text-transform:uppercase;margin-top:2px;}
-/* RSVP PILLS */
-.rsvp-pill{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:700;letter-spacing:.02em;}
-.rsvp-pill.yes{background:#e0f0d8;color:#3a6b28;}
-.rsvp-pill.no{background:var(--red2);color:var(--red);}
-.rsvp-pill.pending{background:var(--bg3);color:var(--text2);}
-/* THEME SWATCHES */
-.theme-swatch{cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;margin-bottom:8px;}
-::-webkit-scrollbar{width:3px;}
+  /* ---------- Dark themes ---------- */
+  [data-theme="midnight"] {
+    --bg-a: #1a1638; --bg-b: #0c0a1e;
+    --card: rgba(30, 26, 60, 0.8); --card-hi: rgba(38, 33, 72, 0.88);
+    --accent-a: #b8ade8; --accent-b: #8a76d6;
+    --text: #f1eefb; --text-muted: #b3a8d9; --text-faint: #6f6596;
+    --border-soft: rgba(138, 118, 214, 0.28); --on-accent: #1c1440;
+  }
+  [data-theme="eclipse"] {
+    --bg-a: #161a1e; --bg-b: #0a0c0e;
+    --card: rgba(20, 24, 28, 0.8); --card-hi: rgba(26, 31, 36, 0.88);
+    --accent-a: #b8c4d0; --accent-b: #7c96ac;
+    --text: #eef2f5; --text-muted: #b3c0cb; --text-faint: #626d78;
+    --border-soft: rgba(124, 150, 172, 0.28); --on-accent: #10161c;
+  }
+  [data-theme="plum"] {
+    --bg-a: #2a1622; --bg-b: #170a12;
+    --card: rgba(40, 20, 33, 0.8); --card-hi: rgba(50, 26, 42, 0.88);
+    --accent-a: #e8a8c8; --accent-b: #c9689a;
+    --text: #fceef4; --text-muted: #d9a3bf; --text-faint: #8f5876;
+    --border-soft: rgba(201, 104, 154, 0.28); --on-accent: #2f0e1c;
+  }
+  [data-theme="onyx"] {
+    --bg-a: #14161c; --bg-b: #08090c;
+    --card: rgba(18, 21, 27, 0.8); --card-hi: rgba(24, 28, 36, 0.88);
+    --accent-a: #b8c0e8; --accent-b: #7c86d6;
+    --text: #eef0fc; --text-muted: #b3b8d9; --text-faint: #626896;
+    --border-soft: rgba(124, 134, 214, 0.28); --on-accent: #10121c;
+  }
+
+  /* ---------- Light themes ---------- */
+  :root, [data-theme="twilight"] {
+    --bg-a: #e4e0f5; --bg-b: #cfc9ea;
+    --card: rgba(255, 255, 255, 0.68); --card-hi: rgba(255, 255, 255, 0.82);
+    --accent-a: #b3a6e6; --accent-b: #7c68c9;
+    --text: #2c2650; --text-muted: #5a5080; --text-faint: #8a80ad;
+    --border-soft: rgba(124, 104, 201, 0.28); --on-accent: #ffffff;
+  }
+  [data-theme="candlelight"] {
+    --bg-a: #f7ead2; --bg-b: #eccf9e;
+    --card: rgba(255, 255, 255, 0.6); --card-hi: rgba(255, 255, 255, 0.76);
+    --accent-a: #f0c987; --accent-b: #d9a441;
+    --text: #3a2c14; --text-muted: #6e5a38; --text-faint: #a1906b;
+    --border-soft: rgba(217, 164, 65, 0.28); --on-accent: #2f230a;
+  }
+  [data-theme="dusk"] {
+    --bg-a: #f5e4ea; --bg-b: #eacdd8;
+    --card: rgba(255, 255, 255, 0.62); --card-hi: rgba(255, 255, 255, 0.78);
+    --accent-a: #e8a8bc; --accent-b: #c96888;
+    --text: #3a1c26; --text-muted: #6e3d4d; --text-faint: #a17685;
+    --border-soft: rgba(201, 104, 136, 0.28); --on-accent: #2f0e18;
+  }
+  [data-theme="mist"] {
+    --bg-a: #e6eef2; --bg-b: #cddce4;
+    --card: rgba(255, 255, 255, 0.62); --card-hi: rgba(255, 255, 255, 0.78);
+    --accent-a: #a8c0cf; --accent-b: #6f94a8;
+    --text: #16242c; --text-muted: #40545e; --text-faint: #708490;
+    --border-soft: rgba(111, 148, 168, 0.28); --on-accent: #0e181e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top, var(--bg-a), var(--bg-b));
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  .app { width: 100%; max-width: 480px; min-height: 100vh; padding: 1.1rem 1rem 2.5rem; }
+
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.6rem; margin-bottom: 1.1rem; }
+  .header-text { display: flex; flex-direction: column; gap: 0.15rem; }
+  .eyebrow { font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-faint); }
+  .app-name { font-family: "Crimson Pro", Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.45rem; color: var(--accent-b); }
+  .app-subtitle { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; margin-top: 0.1rem; }
+
+  .theme-btn {
+    flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-soft);
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b)); color: var(--on-accent);
+    font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border-soft); border-radius: 1.1rem;
+    padding: 1.1rem 1.05rem; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1); margin-bottom: 0.85rem;
+    backdrop-filter: blur(6px);
+  }
+  .card-header { margin-bottom: 0.7rem; }
+  .card-title { font-family: "Crimson Pro", Georgia, serif; font-style: italic; font-size: 1.1rem; color: var(--text); }
+  .card-subtitle { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; line-height: 1.5; }
+  .note { margin-top: 0.7rem; font-size: 0.72rem; color: var(--text-faint); line-height: 1.55; }
+
+  /* ---------- Moonrise Arc (signature element — settles, doesn't rise) ---------- */
+  .moon-row { display: flex; align-items: center; gap: 1rem; }
+  .moon-wrap { position: relative; width: 96px; height: 58px; flex-shrink: 0; }
+  .moon-wrap svg { width: 100%; height: 100%; overflow: visible; }
+  .moon-arc { fill: none; stroke: var(--border-soft); stroke-width: 3; stroke-linecap: round; }
+  .moon-glow {
+    filter: drop-shadow(0 0 8px var(--accent-b));
+    transition: cx 0.6s ease, cy 0.6s ease;
+  }
+  .moon-info { flex: 1; min-width: 0; }
+  .moon-label { font-family: "Crimson Pro", Georgia, serif; font-style: italic; font-size: 1.05rem; color: var(--text); }
+  .moon-sub { font-size: 0.74rem; color: var(--text-muted); margin-top: 0.15rem; line-height: 1.5; }
+
+  .stat-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.55rem; margin-top: 0.9rem; }
+  .stat { background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-soft); border-radius: 0.75rem; padding: 0.6rem 0.5rem; text-align: center; }
+  .stat-value { font-family: "Crimson Pro", Georgia, serif; font-size: 1.25rem; color: var(--text); }
+  .stat-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.15rem; }
+
+  .progress-container { background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-soft); border-radius: 999px; height: 16px; width: 100%; overflow: hidden; margin-top: 0.5rem; }
+  .progress-fill { background: linear-gradient(90deg, var(--accent-a), var(--accent-b)); height: 100%; width: 0%; border-radius: 999px; transition: width 0.5s ease; }
+  .progress-score-text { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem; }
+
+  .field { margin-bottom: 0.75rem; }
+  .field label { display: block; font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem; }
+  .field textarea {
+    width: 100%; min-height: 62px; padding: 0.65rem 0.75rem; border-radius: 0.75rem; resize: vertical;
+    border: 1px solid var(--border-soft); background: var(--card-hi);
+    color: var(--text); font-family: "Inter", sans-serif; font-size: 0.82rem; line-height: 1.5;
+  }
+  .field textarea::placeholder { color: var(--text-faint); opacity: 1; }
+  .field textarea:focus-visible { outline: 2px solid var(--accent-b); outline-offset: 2px; }
+
+  .btn-primary {
+    width: 100%; padding: 0.68rem; border-radius: 999px; border: none;
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+    color: var(--on-accent); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.02em; cursor: pointer;
+    box-shadow: 0 10px 24px rgba(124, 104, 201, 0.28);
+  }
+  .btn-primary:focus-visible { outline: 2px solid var(--accent-b); outline-offset: 2px; }
+  .btn-secondary {
+    width: 100%; padding: 0.6rem; border-radius: 999px; margin-top: 0.5rem;
+    border: 1px solid var(--border-soft); background: transparent; color: var(--text-muted); font-size: 0.76rem; cursor: pointer;
+  }
+
+  .today-summary-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border-soft); }
+  .today-summary-row:last-child { border-bottom: none; }
+  .today-summary-label { font-size: 0.68rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; }
+  .today-summary-value { font-size: 0.82rem; color: var(--text); text-align: right; line-height: 1.5; }
+
+  /* ---------- Backup & Sync ---------- */
+  .backup-status-row { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; padding: 0.6rem 0.7rem; border-radius: 0.7rem; border: 1px solid var(--border-soft); background: rgba(255, 255, 255, 0.4); }
+  .backup-status-text { font-size: 0.75rem; color: var(--text-muted); }
+  .backup-status-sub { font-size: 0.65rem; color: var(--text-faint); margin-top: 0.1rem; }
+  .backup-badge { font-size: 0.62rem; padding: 0.2rem 0.55rem; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; }
+  .backup-badge.connected { color: #16210f; background: linear-gradient(135deg, #b7d99a, #8ab86a); }
+  .backup-badge.disconnected { color: var(--text-faint); background: rgba(255, 255, 255, 0.4); }
+  .backup-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.65rem; }
+  .backup-btn { padding: 0.6rem 0.5rem; border-radius: 0.7rem; border: 1px solid var(--border-soft); background: transparent; color: var(--text); font-size: 0.74rem; font-weight: 500; cursor: pointer; font-family: "Inter", sans-serif; }
+  .backup-btn.primary { border-color: transparent; background: linear-gradient(135deg, var(--accent-a), var(--accent-b)); color: var(--on-accent); font-weight: 600; }
+  .backup-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .backup-divider { margin: 0.9rem 0 0.6rem; border-top: 1px solid var(--border-soft); padding-top: 0.7rem; }
+  .backup-section-label { font-size: 0.68rem; color: var(--accent-b); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem; }
+
+  .footer-line { text-align: center; font-size: 0.75rem; color: var(--text-faint); font-family: "Crimson Pro", Georgia, serif; font-style: italic; margin-top: 0.6rem; }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(10, 8, 30, 0.4); backdrop-filter: blur(6px); display: none; align-items: flex-end; justify-content: center; z-index: 999; }
+  .modal-overlay.open { display: flex; }
+  .modal-card {
+    background: var(--card-hi); border: 1px solid var(--border-soft);
+    border-top-left-radius: 1.4rem; border-top-right-radius: 1.4rem;
+    padding: 1.3rem 1.15rem calc(1.5rem + env(safe-area-inset-bottom)); width: 100%; max-width: 480px;
+    max-height: 82vh; overflow-y: auto; box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.16); animation: modalUp 0.28s ease-out;
+    backdrop-filter: blur(10px);
+  }
+  @keyframes modalUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .modal-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.6rem; }
+  .modal-title { font-family: "Crimson Pro", Georgia, serif; font-style: italic; font-size: 1.25rem; color: var(--text); }
+  .modal-close { background: none; border: none; font-size: 1.3rem; color: var(--accent-b); cursor: pointer; line-height: 1; flex-shrink: 0; }
+  .modal-body-text { margin-top: 0.7rem; font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+  .modal-cta { margin-top: 1.1rem; width: 100%; padding: 0.7rem; border-radius: 999px; border: none; background: linear-gradient(135deg, var(--accent-a), var(--accent-b)); color: var(--on-accent); font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+  .modal-cta-secondary { margin-top: 0.6rem; width: 100%; padding: 0.65rem; border-radius: 999px; border: 1px solid var(--border-soft); background: transparent; color: var(--text-muted); font-size: 0.78rem; cursor: pointer; }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%) translateY(10px);
+    background: var(--card-hi); border: 1px solid var(--border-soft); color: var(--text);
+    font-size: 0.78rem; padding: 0.6rem 1rem; border-radius: 999px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; z-index: 1000; white-space: nowrap;
+    backdrop-filter: blur(8px);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast-action { color: var(--accent-b); text-decoration: underline; margin-left: 0.5rem; cursor: pointer; font-weight: 600; }
 </style>
 </head>
-<body>
+<body data-theme="twilight">
 
-<div class="sbar"><span>MOBILE FIRST STUDIO</span></div>
+<div class="app">
+  <header>
+    <div class="header-text">
+      <div class="eyebrow">Mobile First Studio</div>
+      <div class="app-name">Spiritual Evening Routine</div>
+      <div class="app-subtitle">A gentle close to your day, before rest.</div>
+    </div>
+    <button class="theme-btn" id="theme-btn" title="Change theme">✨</button>
+  </header>
 
-<div class="screen">
+  <section class="card">
+    <div class="card-header"><div class="card-title">Tonight</div></div>
+    <div class="moon-row">
+      <div class="moon-wrap">
+        <svg viewBox="0 0 96 58">
+          <path class="moon-arc" d="M6,52 A42,42 0 0,1 90,52" />
+          <circle class="moon-glow" id="moon-glow" cx="6" cy="52" r="6" fill="var(--accent-b)" />
+        </svg>
+      </div>
+      <div class="moon-info">
+        <div class="moon-label" id="moon-label">Not yet wound down</div>
+        <div class="moon-sub" id="moon-sub">Fill in tonight's routine to settle in.</div>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="stat-value" id="stat-streak">0</div><div class="stat-label">Night streak</div></div>
+      <div class="stat"><div class="stat-value" id="stat-days">0</div><div class="stat-label">Nights logged</div></div>
+      <div class="stat"><div class="stat-value" id="stat-today">—</div><div class="stat-label">Tonight's score</div></div>
+    </div>
+  </section>
 
-<!-- DASHBOARD -->
-<div class="page active" id="pg-dash">
-<div class="ph"><div class="ey">Together Forever</div><h1 id="dash-names">Our Wedding</h1></div>
-<div class="ps">
-<div class="countdown-hero">
-<div class="countdown-num" id="cd-num">—</div>
-<div class="countdown-label" id="cd-label">days to go</div>
-<div class="countdown-date" id="cd-date">Set your date in Setup</div>
-</div>
-<div class="stat-grid">
-<div class="stat-card"><div class="stat-num" id="d-guests">0</div><div class="stat-label">Attending</div><div style="font-size:11px;color:var(--text2);margin-top:2px;" id="d-guests-sub"></div></div>
-<div class="stat-card"><div class="stat-num" id="d-vendors">0</div><div class="stat-label">Vendors</div></div>
-</div>
-<div class="card">
-<div class="sl" style="margin-top:0">Budget</div>
-<div style="display:flex;justify-content:space-between;align-items:baseline;">
-<div style="font-size:20px;font-family:'Cormorant Garamond',serif;color:var(--text);" id="d-budget-spent">$0</div>
-<div style="font-size:13px;color:var(--text2);">of <span id="d-budget-total">$0</span></div>
-</div>
-<div class="budget-bar-track"><div class="budget-bar-fill" id="d-budget-bar" style="width:0%"></div></div>
-</div>
-<div class="sl">Upcoming Tasks</div>
-<div id="d-upcoming"></div>
-<div style="height:20px;"></div>
-</div>
-</div>
+  <section class="card" id="form-card">
+    <div class="card-header"><div class="card-title">Wind-Down Routine</div></div>
+    <div class="field"><label>Releasing today</label><textarea id="f-release" placeholder="What are you setting down before sleep?"></textarea></div>
+    <div class="field"><label>Gratitude</label><textarea id="f-gratitude" placeholder="Something good from today, however small…"></textarea></div>
+    <div class="field"><label>Emotional check-in</label><textarea id="f-emotion" placeholder="How do you feel right now, in this moment?"></textarea></div>
+    <div class="field"><label>Wind-down ritual</label><textarea id="f-ritual" placeholder="Tea, a bath, dim lights, reading…"></textarea></div>
+    <div class="field"><label>Tomorrow's gentle focus</label><textarea id="f-tomorrow" placeholder="One soft thing to carry into tomorrow, nothing more…"></textarea></div>
+    <div class="field"><label>Sleep affirmation</label><textarea id="f-affirmation" placeholder="A quiet truth to fall asleep with…"></textarea></div>
+    <button class="btn-primary" id="save-btn">Save tonight's routine</button>
+  </section>
 
-<!-- GUEST LIST -->
-<div class="page" id="pg-guests">
-<div class="ph"><div class="ey">Guest List</div><h1>Who's Coming</h1></div>
-<div class="ps">
-<div class="stat-grid" style="grid-template-columns:1fr 1fr 1fr;">
-<div class="stat-card"><div class="stat-num" id="g-yes">0</div><div class="stat-label">Attending</div></div>
-<div class="stat-card"><div class="stat-num" id="g-pending">0</div><div class="stat-label">Pending</div></div>
-<div class="stat-card"><div class="stat-num" id="g-headcount">0</div><div class="stat-label">Headcount (+1s)</div></div>
-</div>
-<div id="g-meal-breakdown" style="margin-bottom:10px;"></div>
-<div id="guest-list"></div>
-<div style="height:70px;"></div>
-</div>
-<button class="fab" onclick="openGuestModal(null)"><i class="ti ti-plus"></i></button>
-</div>
+  <section class="card" id="summary-card" style="display:none;">
+    <div class="card-header">
+      <div class="card-title">Rest Score</div>
+      <div class="progress-container"><div class="progress-fill" id="score-bar"></div></div>
+      <div class="progress-score-text" id="score-text"></div>
+    </div>
+    <div id="today-summary-body"></div>
+    <button class="btn-secondary" id="edit-today-btn">Edit tonight's routine</button>
+  </section>
 
-<!-- BUDGET -->
-<div class="page" id="pg-budget">
-<div class="ph"><div class="ey">Budget</div><h1>Every Dollar</h1></div>
-<div class="ps">
-<div class="card-hdr">
-<div style="font-size:12px;letter-spacing:.1em;color:rgba(255,255,255,.6);text-transform:uppercase;margin-bottom:4px;">Total Budget</div>
-<div style="font-size:26px;font-family:'Cormorant Garamond',serif;color:white;font-style:italic;" id="b-total">$0</div>
-<div class="budget-bar-track" style="background:rgba(255,255,255,.2);margin-top:10px;"><div class="budget-bar-fill" id="b-bar" style="width:0%"></div></div>
-<div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:6px;" id="b-remaining">$0 remaining</div>
-</div>
-<div id="budget-list"></div>
-<div style="height:70px;"></div>
-</div>
-<button class="fab" onclick="openBudgetModal(null)"><i class="ti ti-plus"></i></button>
-</div>
+  <section class="card">
+    <div class="card-header">
+      <div class="card-title">Backup &amp; Sync</div>
+      <div class="card-subtitle">Keep your wind-down history safe.</div>
+    </div>
 
-<!-- VENDORS -->
-<div class="page" id="pg-vendors">
-<div class="ph"><div class="ey">Vendors</div><h1>Your Team</h1></div>
-<div class="ps">
-<div id="vendor-list"></div>
-<div style="height:70px;"></div>
-</div>
-<button class="fab" onclick="openVendorModal(null)"><i class="ti ti-plus"></i></button>
-</div>
+    <div class="backup-status-row">
+      <div>
+        <div class="backup-status-text" id="drive-status-text">Google Drive not connected</div>
+        <div class="backup-status-sub" id="drive-status-sub">Your data stays on this device until you connect.</div>
+      </div>
+      <div class="backup-badge disconnected" id="drive-badge">Off</div>
+    </div>
 
-<!-- TIMELINE -->
-<div class="page" id="pg-timeline">
-<div class="ph"><div class="ey">Timeline</div><h1>The To-Do List</h1></div>
-<div class="ps">
-<div class="tab-row" id="timeline-tabs"></div>
-<div id="timeline-list"></div>
-<div style="height:70px;"></div>
-</div>
-<button class="fab" onclick="openTaskModal(null)"><i class="ti ti-plus"></i></button>
-</div>
+    <div class="backup-actions">
+      <button class="backup-btn primary" id="drive-connect-btn">Connect Google Drive</button>
+      <button class="backup-btn" id="drive-backup-btn" disabled>Back up now</button>
+    </div>
+    <div class="backup-actions">
+      <button class="backup-btn" id="drive-restore-btn" disabled>Restore from Drive</button>
+      <button class="backup-btn" id="drive-disconnect-btn" disabled>Disconnect</button>
+    </div>
 
-<!-- SETUP -->
-<div class="page" id="pg-setup">
-<div class="ph"><div class="ey">Profile</div><h1>Setup</h1></div>
-<div class="ps">
-<div class="sl">Your Names</div>
-<div class="field"><label>Partner 1</label><input id="s-p1" placeholder="e.g. Jessica"/></div>
-<div class="field"><label>Partner 2</label><input id="s-p2" placeholder="e.g. Alex"/></div>
-<div class="section-div"></div>
-<div class="sl">Wedding Date</div>
-<div class="field"><label>Date</label><input id="s-date" type="date"/></div>
-<div class="section-div"></div>
-<div class="sl">Total Budget</div>
-<div class="field"><label>Amount</label><input id="s-budget" type="number" step="0.01" placeholder="e.g. 25000"/></div>
-<div class="section-div"></div><button class="btn-full" onclick="saveProfile()">Save</button>
+    <div class="backup-divider">
+      <div class="backup-section-label">Local backup file</div>
+      <div class="backup-actions">
+        <button class="backup-btn" id="export-btn">Export backup file</button>
+        <button class="backup-btn" id="import-btn">Import backup file</button>
+      </div>
+    </div>
 
-<div class="section-div"></div>
-<div class="sl">Font Style</div>
-<div class="field"><select id="s-font" onchange="applyWPFont(this.value)">
-<option value="Cormorant Garamond">Cormorant Garamond — refined serif</option>
-<option value="EB Garamond">EB Garamond — classic serif</option>
-<option value="Playfair Display">Playfair Display — elegant serif</option>
-<option value="Libre Baskerville">Libre Baskerville — book serif</option>
-<option value="Lato">Lato — modern sans-serif</option>
-</select></div>
+    <div class="note">Exporting or backing up saves your wind-down history. It never includes anything else from your device.</div>
+  </section>
 
-<div class="section-div"></div>
-<div class="sl">Theme Color</div>
-<div id="wp-theme-swatches"></div>
+  <div class="footer-line">Rest is part of the practice, too.</div>
 
-<div class="section-div"></div>
-<div class="sl">Cloud Backup (Google Drive)</div>
-<div id="gdrive-section" style="margin-bottom:14px;"></div>
-
-<div class="section-div"></div>
-<div class="sl">Data Backup</div>
-<div class="card" style="margin-bottom:10px">
-<div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:14px">Download a backup of all your data. Import it anytime to restore everything instantly.</div>
-<button class="btn-full" onclick="exportData()" style="margin-bottom:8px">&#8595; Export Backup</button>
-<button class="btn-cancel" onclick="importData()" style="width:100%">&#8593; Import Backup</button>
-</div>
-<div style="height:20px;"></div>
-</div>
+  <input type="file" id="import-file-input" accept="application/json" style="display:none" />
 </div>
 
+<!-- SHARED MODAL -->
+<div id="app-modal" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <button class="modal-close" id="modal-close-btn">×</button>
+    </div>
+    <div class="modal-body-text" id="modal-body-text"></div>
+    <button class="modal-cta" id="modal-cta-btn"></button>
+    <button class="modal-cta-secondary" id="modal-secondary-btn"></button>
+  </div>
 </div>
 
-<nav class="nav">
-<button class="ni active" onclick="go('dash',this)"><i class="ti ti-heart"></i><span>Home</span></button>
-<button class="ni" onclick="go('guests',this)"><i class="ti ti-users"></i><span>Guests</span></button>
-<button class="ni" onclick="go('budget',this)"><i class="ti ti-wallet"></i><span>Budget</span></button>
-<button class="ni" onclick="go('vendors',this)"><i class="ti ti-building-store"></i><span>Vendors</span></button>
-<button class="ni" onclick="go('timeline',this)"><i class="ti ti-checklist"></i><span>To-Do</span></button>
-<button class="ni" onclick="go('setup',this)"><i class="ti ti-settings"></i><span>Setup</span></button>
-</nav>
-
-<!-- GUEST MODAL -->
-<div class="modal-bg" id="guest-modal"><div class="modal">
-<h2 id="guest-modal-title">Add Guest</h2>
-<div class="field"><label>Name</label><input id="gu-name" placeholder="e.g. Sarah Johnson"/></div>
-<div class="field"><label>Group</label><input id="gu-group" placeholder="e.g. Bride's family, Friends"/></div>
-<div class="field"><label>RSVP Status</label><select id="gu-rsvp">
-<option value="pending">Pending</option>
-<option value="yes">Attending</option>
-<option value="no">Not Attending</option>
-</select></div>
-<div class="field"><label>Plus One</label><select id="gu-plusone">
-<option value="no">No</option>
-<option value="yes">Yes</option>
-</select></div>
-<div class="field"><label>Meal Choice</label><select id="gu-meal">
-<option value="">Not set</option>
-<option value="Chicken">Chicken</option>
-<option value="Beef">Beef</option>
-<option value="Fish">Fish</option>
-<option value="Vegetarian">Vegetarian</option>
-<option value="Vegan">Vegan</option>
-<option value="Kids Meal">Kids Meal</option>
-<option value="Other">Other</option>
-</select></div>
-<div class="field"><label>Notes</label><textarea id="gu-notes" placeholder="Allergies, seating requests, etc."></textarea></div>
-<div class="btn-row"><button class="btn-cancel" onclick="closeModal('guest-modal')">Cancel</button><button class="btn-save" onclick="saveGuest()">Save</button></div>
-<button class="btn-delete" id="guest-del-btn" style="display:none;" onclick="deleteGuest()">Delete Guest</button>
-</div></div>
-
-<!-- BUDGET MODAL -->
-<div class="modal-bg" id="budget-modal"><div class="modal">
-<h2 id="budget-modal-title">Add Expense</h2>
-<div class="field"><label>Item</label><input id="bu-item" placeholder="e.g. Venue deposit"/></div>
-<div class="field"><label>Category</label><select id="bu-cat">
-<option value="Venue">Venue</option>
-<option value="Catering">Catering</option>
-<option value="Attire">Attire</option>
-<option value="Photography">Photography</option>
-<option value="Flowers">Flowers</option>
-<option value="Music">Music</option>
-<option value="Decor">Decor</option>
-<option value="Stationery">Stationery</option>
-<option value="Other">Other</option>
-</select></div>
-<div class="field"><label>Estimated Cost</label><input id="bu-est" type="number" step="0.01" placeholder="e.g. 5000"/></div>
-<div class="field"><label>Actual Cost (if paid)</label><input id="bu-actual" type="number" step="0.01" placeholder="Optional"/></div>
-<div class="field"><label>Status</label><select id="bu-status">
-<option value="planned">Planned</option>
-<option value="deposit">Deposit Paid</option>
-<option value="paid">Paid in Full</option>
-</select></div>
-<div class="btn-row"><button class="btn-cancel" onclick="closeModal('budget-modal')">Cancel</button><button class="btn-save" onclick="saveBudget()">Save</button></div>
-<button class="btn-delete" id="budget-del-btn" style="display:none;" onclick="deleteBudget()">Delete Expense</button>
-</div></div>
-
-<!-- VENDOR MODAL -->
-<div class="modal-bg" id="vendor-modal"><div class="modal">
-<h2 id="vendor-modal-title">Add Vendor</h2>
-<div class="field"><label>Business Name</label><input id="ve-name" placeholder="e.g. Bloom & Co Florals"/></div>
-<div class="field"><label>Category</label><select id="ve-cat">
-<option value="Venue">Venue</option>
-<option value="Catering">Catering</option>
-<option value="Photography">Photography</option>
-<option value="Videography">Videography</option>
-<option value="Florist">Florist</option>
-<option value="Music/DJ">Music/DJ</option>
-<option value="Officiant">Officiant</option>
-<option value="Cake">Cake</option>
-<option value="Hair & Makeup">Hair & Makeup</option>
-<option value="Other">Other</option>
-</select></div>
-<div class="field"><label>Contact Name</label><input id="ve-contact" placeholder="Optional"/></div>
-<div class="field"><label>Phone / Email</label><input id="ve-info" placeholder="Optional"/></div>
-<div class="field"><label>Status</label><select id="ve-status">
-<option value="researching">Researching</option>
-<option value="contacted">Contacted</option>
-<option value="booked">Booked</option>
-</select></div>
-<div class="field"><label>Notes</label><textarea id="ve-notes" placeholder="Optional"></textarea></div>
-<div class="btn-row"><button class="btn-cancel" onclick="closeModal('vendor-modal')">Cancel</button><button class="btn-save" onclick="saveVendor()">Save</button></div>
-<button class="btn-delete" id="vendor-del-btn" style="display:none;" onclick="deleteVendor()">Delete Vendor</button>
-</div></div>
-
-<!-- TASK MODAL -->
-<div class="modal-bg" id="task-modal"><div class="modal">
-<h2 id="task-modal-title">Add Task</h2>
-<div class="field"><label>Task</label><input id="ta-name" placeholder="e.g. Book the venue"/></div>
-<div class="field"><label>Timeframe</label><select id="ta-phase">
-<option value="12+ Months">12+ Months Before</option>
-<option value="9-11 Months">9–11 Months Before</option>
-<option value="6-8 Months">6–8 Months Before</option>
-<option value="3-5 Months">3–5 Months Before</option>
-<option value="1-2 Months">1–2 Months Before</option>
-<option value="Final Weeks">Final Weeks</option>
-</select></div>
-<div class="field"><label>Notes</label><textarea id="ta-notes" placeholder="Optional"></textarea></div>
-<div class="btn-row"><button class="btn-cancel" onclick="closeModal('task-modal')">Cancel</button><button class="btn-save" onclick="saveTask()">Save</button></div>
-<button class="btn-delete" id="task-del-btn" style="display:none;" onclick="deleteTask()">Delete Task</button>
-</div></div>
+<div class="toast" id="toast"></div>
 
 <script>
-/* ── CORE DATA ── */
-var DB={profile:{},guests:[],budget:[],vendors:[],tasks:[]};
-var eId={guest:null,budget:null,vendor:null,task:null};
-var timelinePhase='12+ Months';
+  /* =========================================================
+     STORAGE — date-keyed, one entry per evening. Uses its own
+     storage keys (distinct from the Simple tier's ewd_* keys)
+     so both can coexist without overwriting each other's data.
+     ========================================================= */
+  const STORE_KEY = "ewdc_data_v1";
+  const FIELDS = ["release", "gratitude", "emotion", "ritual", "tomorrow", "affirmation"];
 
-function sv(){
-  try{localStorage.setItem('mfs_wp_v1',JSON.stringify(DB));}catch(e){}
-  if(typeof gdriveIsConnected==='function' && gdriveIsConnected()){
-    clearTimeout(_gdriveBackupTimer);
-    _gdriveBackupTimer=setTimeout(function(){gdriveBackupNow().catch(function(e){console.error('Auto-backup failed:',e);});},3000);
+  function defaultDB() { return { theme: "twilight", dailyEntries: {} }; }
+  let DB = defaultDB();
+
+  function ld() {
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (raw) DB = Object.assign(defaultDB(), JSON.parse(raw));
+    } catch (e) { DB = defaultDB(); }
   }
-}
-function ld(){
-  try{
-    var d=localStorage.getItem('mfs_wp_v1');
-    if(d){DB=JSON.parse(d);['guests','budget','vendors','tasks'].forEach(function(k){if(!DB[k])DB[k]=[];});if(!DB.profile)DB.profile={};}
-  }catch(e){}
-}
-ld();
-
-if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').then(function(reg){reg.update();}).catch(function(){});});}
-
-function go(id,el){
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('active');});
-  document.getElementById('pg-'+id).classList.add('active');el.classList.add('active');
-  if(id==='dash')renderDash();
-  if(id==='guests')renderGuests();
-  if(id==='budget')renderBudget();
-  if(id==='vendors')renderVendors();
-  if(id==='timeline')renderTimeline();
-  if(id==='setup')renderSetup();
-}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function openModal(id){document.getElementById(id).classList.add('open');}
-function fmt$(n){return'$'+(parseFloat(n)||0).toFixed(2);}
-function fmtDate(d){if(!d)return'';var p=d.split('-');return(+p[1])+'/'+(+p[2])+'/'+(p[0].slice(2));}
-
-/* ── DASHBOARD ── */
-function daysUntilWedding(){
-  if(!DB.profile.date)return null;
-  var now=new Date();now.setHours(0,0,0,0);
-  var wd=new Date(DB.profile.date+'T00:00:00');
-  return Math.round((wd-now)/86400000);
-}
-function attendingHeadcount(){
-  return DB.guests.filter(function(g){return g.rsvp==='yes';}).reduce(function(sum,g){return sum+1+(g.plusOne==='yes'?1:0);},0);
-}
-function renderDash(){
-  var p1=DB.profile.p1||'',p2=DB.profile.p2||'';
-  document.getElementById('dash-names').textContent=(p1&&p2)?(p1+' & '+p2):'Our Wedding';
-  var days=daysUntilWedding();
-  document.getElementById('cd-num').textContent=days===null?'—':(days<0?'0':days);
-  document.getElementById('cd-label').textContent=days===null?'set your date':(days<0?'married!':(days===1?'day to go':'days to go'));
-  document.getElementById('cd-date').textContent=DB.profile.date?fmtDate(DB.profile.date):'Set your date in Setup';
-  document.getElementById('d-guests').textContent=attendingHeadcount();
-  document.getElementById('d-guests-sub').textContent=DB.guests.length?('of '+DB.guests.length+' invited'):'';
-  document.getElementById('d-vendors').textContent=DB.vendors.filter(function(v){return v.status==='booked';}).length;
-  var spent=DB.budget.reduce(function(s,b){return s+(parseFloat(b.actual)||0);},0);
-  var total=parseFloat(DB.profile.budget)||0;
-  document.getElementById('d-budget-spent').textContent=fmt$(spent);
-  document.getElementById('d-budget-total').textContent=fmt$(total);
-  var pct=total?Math.min(100,(spent/total)*100):0;
-  var bar=document.getElementById('d-budget-bar');
-  bar.style.width=pct+'%';
-  bar.className='budget-bar-fill'+(spent>total&&total>0?' over':'');
-
-  var upcoming=DB.tasks.filter(function(t){return!t.done;}).slice(0,5);
-  var up=document.getElementById('d-upcoming');
-  up.innerHTML=upcoming.length?upcoming.map(function(t){
-    return'<div class="row-item" onclick="openTaskModal(\''+t.id+'\')"><div class="row-info"><div class="row-title">'+t.name+'</div><div class="row-sub">'+t.phase+'</div></div></div>';
-  }).join(''):'<div class="empty">No tasks yet. Add your first to-do!</div>';
-}
-
-/* ── GUESTS ── */
-function renderGuests(){
-  var yes=DB.guests.filter(function(g){return g.rsvp==='yes';}).length;
-  var pending=DB.guests.filter(function(g){return g.rsvp==='pending';}).length;
-  document.getElementById('g-yes').textContent=yes;
-  document.getElementById('g-pending').textContent=pending;
-  document.getElementById('g-headcount').textContent=attendingHeadcount();
-
-  var mealCounts={};
-  DB.guests.filter(function(g){return g.rsvp==='yes'&&g.meal;}).forEach(function(g){mealCounts[g.meal]=(mealCounts[g.meal]||0)+1;});
-  var mealKeys=Object.keys(mealCounts);
-  var mb=document.getElementById('g-meal-breakdown');
-  mb.innerHTML=mealKeys.length?'<div class="card-accent" style="font-size:13px;color:var(--text);">'
-    +'<div style="font-size:11px;letter-spacing:.08em;color:var(--text2);text-transform:uppercase;margin-bottom:4px;">Meal Choices (Attending)</div>'
-    +mealKeys.map(function(k){return k+': '+mealCounts[k];}).join(' &middot; ')+'</div>':'';
-
-  var list=document.getElementById('guest-list');
-  list.innerHTML=DB.guests.length?DB.guests.map(function(g){
-    var pillClass=g.rsvp==='yes'?'yes':g.rsvp==='no'?'no':'pending';
-    var pillText=g.rsvp==='yes'?'Attending':g.rsvp==='no'?'Not Attending':'Pending';
-    return'<div class="row-item" onclick="openGuestModal(\''+g.id+'\')">'
-      +'<div class="row-info"><div class="row-title">'+g.name+(g.plusOne==='yes'?' +1':'')+'</div>'
-      +(g.group||g.meal?'<div class="row-sub">'+[g.group,g.meal].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
-      +'<span class="rsvp-pill '+pillClass+'">'+pillText+'</span>'
-      +'</div>';
-  }).join(''):'<div class="empty">No guests yet. Tap + to add your first guest.</div>';
-}
-function openGuestModal(id){
-  eId.guest=id;
-  var g=id?DB.guests.find(function(x){return x.id===id;}):null;
-  document.getElementById('guest-modal-title').textContent=id?'Edit Guest':'Add Guest';
-  document.getElementById('gu-name').value=g?g.name:'';
-  document.getElementById('gu-group').value=g?g.group||'':'';
-  document.getElementById('gu-rsvp').value=g?g.rsvp||'pending':'pending';
-  document.getElementById('gu-plusone').value=g?g.plusOne||'no':'no';
-  document.getElementById('gu-meal').value=g?g.meal||'':'';
-  document.getElementById('gu-notes').value=g?g.notes||'':'';
-  document.getElementById('guest-del-btn').style.display=id?'block':'none';
-  openModal('guest-modal');
-}
-function saveGuest(){
-  var name=document.getElementById('gu-name').value.trim();if(!name)return;
-  var entry={id:eId.guest||('g'+Date.now()),name:name,group:document.getElementById('gu-group').value.trim(),rsvp:document.getElementById('gu-rsvp').value,plusOne:document.getElementById('gu-plusone').value,meal:document.getElementById('gu-meal').value,notes:document.getElementById('gu-notes').value.trim()};
-  if(eId.guest){var i=DB.guests.findIndex(function(x){return x.id===eId.guest;});if(i>-1)DB.guests[i]=entry;}
-  else DB.guests.push(entry);
-  sv();closeModal('guest-modal');renderGuests();renderDash();
-}
-function deleteGuest(){
-  spConfirm('Delete this guest?','This cannot be undone.',function(){
-    DB.guests=DB.guests.filter(function(x){return x.id!==eId.guest;});
-    sv();closeModal('guest-modal');renderGuests();renderDash();
-  });
-}
-
-/* ── BUDGET ── */
-function renderBudget(){
-  var total=parseFloat(DB.profile.budget)||0;
-  var spent=DB.budget.reduce(function(s,b){return s+(parseFloat(b.actual)||0);},0);
-  document.getElementById('b-total').textContent=fmt$(total);
-  var pct=total?Math.min(100,(spent/total)*100):0;
-  var bar=document.getElementById('b-bar');
-  bar.style.width=pct+'%';
-  bar.className='budget-bar-fill'+(spent>total&&total>0?' over':'');
-  document.getElementById('b-remaining').textContent=fmt$(Math.max(0,total-spent))+' remaining';
-
-  var list=document.getElementById('budget-list');
-  list.innerHTML=DB.budget.length?DB.budget.map(function(b){
-    var statusLabel=b.status==='paid'?'Paid':b.status==='deposit'?'Deposit Paid':'Planned';
-    return'<div class="row-item" onclick="openBudgetModal(\''+b.id+'\')">'
-      +'<div class="row-info"><div class="row-title">'+b.item+'</div>'
-      +'<div class="row-sub">'+b.category+' · '+statusLabel+'</div></div>'
-      +'<div style="text-align:right;"><div style="font-size:16px;font-family:\'Cormorant Garamond\',serif;color:var(--text);">'+fmt$(b.actual||b.est)+'</div>'
-      +(b.actual?'':'<div style="font-size:11px;color:var(--text2);">est.</div>')+'</div>'
-      +'</div>';
-  }).join(''):'<div class="empty">No expenses logged yet.</div>';
-}
-function openBudgetModal(id){
-  eId.budget=id;
-  var b=id?DB.budget.find(function(x){return x.id===id;}):null;
-  document.getElementById('budget-modal-title').textContent=id?'Edit Expense':'Add Expense';
-  document.getElementById('bu-item').value=b?b.item:'';
-  document.getElementById('bu-cat').value=b?b.category||'Other':'Other';
-  document.getElementById('bu-est').value=b?b.est||'':'';
-  document.getElementById('bu-actual').value=b?b.actual||'':'';
-  document.getElementById('bu-status').value=b?b.status||'planned':'planned';
-  document.getElementById('budget-del-btn').style.display=id?'block':'none';
-  openModal('budget-modal');
-}
-function saveBudget(){
-  var item=document.getElementById('bu-item').value.trim();if(!item)return;
-  var entry={id:eId.budget||('b'+Date.now()),item:item,category:document.getElementById('bu-cat').value,est:document.getElementById('bu-est').value,actual:document.getElementById('bu-actual').value,status:document.getElementById('bu-status').value};
-  if(eId.budget){var i=DB.budget.findIndex(function(x){return x.id===eId.budget;});if(i>-1)DB.budget[i]=entry;}
-  else DB.budget.push(entry);
-  sv();closeModal('budget-modal');renderBudget();renderDash();
-}
-function deleteBudget(){
-  spConfirm('Delete this expense?','This cannot be undone.',function(){
-    DB.budget=DB.budget.filter(function(x){return x.id!==eId.budget;});
-    sv();closeModal('budget-modal');renderBudget();renderDash();
-  });
-}
-
-/* ── VENDORS ── */
-function renderVendors(){
-  var list=document.getElementById('vendor-list');
-  list.innerHTML=DB.vendors.length?DB.vendors.map(function(v){
-    var statusColor=v.status==='booked'?'#3a6b28':v.status==='contacted'?'#b08850':'#a07e88';
-    var statusLabel=v.status==='booked'?'Booked':v.status==='contacted'?'Contacted':'Researching';
-    return'<div class="row-item" onclick="openVendorModal(\''+v.id+'\')">'
-      +'<div class="row-info"><div class="row-title">'+v.name+'</div>'
-      +'<div class="row-sub">'+v.category+'</div></div>'
-      +'<span class="rsvp-pill" style="background:'+statusColor+'22;color:'+statusColor+';">'+statusLabel+'</span>'
-      +'</div>';
-  }).join(''):'<div class="empty">No vendors yet. Tap + to add your first.</div>';
-}
-function openVendorModal(id){
-  eId.vendor=id;
-  var v=id?DB.vendors.find(function(x){return x.id===id;}):null;
-  document.getElementById('vendor-modal-title').textContent=id?'Edit Vendor':'Add Vendor';
-  document.getElementById('ve-name').value=v?v.name:'';
-  document.getElementById('ve-cat').value=v?v.category||'Other':'Other';
-  document.getElementById('ve-contact').value=v?v.contact||'':'';
-  document.getElementById('ve-info').value=v?v.info||'':'';
-  document.getElementById('ve-status').value=v?v.status||'researching':'researching';
-  document.getElementById('ve-notes').value=v?v.notes||'':'';
-  document.getElementById('vendor-del-btn').style.display=id?'block':'none';
-  openModal('vendor-modal');
-}
-function saveVendor(){
-  var name=document.getElementById('ve-name').value.trim();if(!name)return;
-  var entry={id:eId.vendor||('v'+Date.now()),name:name,category:document.getElementById('ve-cat').value,contact:document.getElementById('ve-contact').value.trim(),info:document.getElementById('ve-info').value.trim(),status:document.getElementById('ve-status').value,notes:document.getElementById('ve-notes').value.trim()};
-  if(eId.vendor){var i=DB.vendors.findIndex(function(x){return x.id===eId.vendor;});if(i>-1)DB.vendors[i]=entry;}
-  else DB.vendors.push(entry);
-  sv();closeModal('vendor-modal');renderVendors();renderDash();
-}
-function deleteVendor(){
-  spConfirm('Delete this vendor?','This cannot be undone.',function(){
-    DB.vendors=DB.vendors.filter(function(x){return x.id!==eId.vendor;});
-    sv();closeModal('vendor-modal');renderVendors();renderDash();
-  });
-}
-
-/* ── TIMELINE ── */
-var TIMELINE_PHASES=['12+ Months','9-11 Months','6-8 Months','3-5 Months','1-2 Months','Final Weeks'];
-function renderTimeline(){
-  var tabs=document.getElementById('timeline-tabs');
-  tabs.innerHTML=TIMELINE_PHASES.map(function(p){
-    return'<button class="tab-btn'+(timelinePhase===p?' active':'')+'" onclick="switchTimelinePhase(\''+p+'\',this)">'+p+'</button>';
-  }).join('');
-  var filtered=DB.tasks.filter(function(t){return t.phase===timelinePhase;});
-  var list=document.getElementById('timeline-list');
-  list.innerHTML=filtered.length?filtered.map(function(t){
-    return'<div class="row-item" onclick="openTaskModal(\''+t.id+'\')">'
-      +'<div class="row-info" style="'+(t.done?'opacity:.5;text-decoration:line-through;':'')+'"><div class="row-title">'+t.name+'</div>'
-      +(t.notes?'<div class="row-sub">'+t.notes+'</div>':'')+'</div>'
-      +'<button onclick="event.stopPropagation();toggleTask(\''+t.id+'\')" style="width:26px;height:26px;border-radius:50%;border:1.5px solid '+(t.done?'var(--hdr)':'var(--border)')+';background:'+(t.done?'var(--hdr)':'transparent')+';display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">'+(t.done?'<i class="ti ti-check" style="font-size:14px;color:white;"></i>':'')+'</button>'
-      +'</div>';
-  }).join(''):'<div class="empty">No tasks in this timeframe yet.</div>';
-}
-function switchTimelinePhase(p,el){timelinePhase=p;renderTimeline();}
-function toggleTask(id){var t=DB.tasks.find(function(x){return x.id===id;});if(t){t.done=!t.done;sv();renderTimeline();renderDash();}}
-function openTaskModal(id){
-  eId.task=id;
-  var t=id?DB.tasks.find(function(x){return x.id===id;}):null;
-  document.getElementById('task-modal-title').textContent=id?'Edit Task':'Add Task';
-  document.getElementById('ta-name').value=t?t.name:'';
-  document.getElementById('ta-phase').value=t?t.phase:timelinePhase;
-  document.getElementById('ta-notes').value=t?t.notes||'':'';
-  document.getElementById('task-del-btn').style.display=id?'block':'none';
-  openModal('task-modal');
-}
-function saveTask(){
-  var name=document.getElementById('ta-name').value.trim();if(!name)return;
-  var entry={id:eId.task||('t'+Date.now()),name:name,phase:document.getElementById('ta-phase').value,notes:document.getElementById('ta-notes').value.trim(),done:false};
-  if(eId.task){var ex=DB.tasks.find(function(x){return x.id===eId.task;});if(ex)entry.done=ex.done;var i=DB.tasks.findIndex(function(x){return x.id===eId.task;});if(i>-1)DB.tasks[i]=entry;}
-  else DB.tasks.push(entry);
-  sv();closeModal('task-modal');renderTimeline();renderDash();
-}
-function deleteTask(){
-  spConfirm('Delete this task?','This cannot be undone.',function(){
-    DB.tasks=DB.tasks.filter(function(x){return x.id!==eId.task;});
-    sv();closeModal('task-modal');renderTimeline();renderDash();
-  });
-}
-
-/* ── THEMES ── */
-var WP_THEMES={
-  blush:{name:'Blush & Champagne',hdr:'#a4677a',bg:'#fdf6f3',bg2:'#fff',bg3:'#f9e9e4',text:'#3a2228',text2:'#a07e88',text3:'#c8a8b0',accent:'#c9963b',accent2:'#fbf0db',border:'#f0d4d8',border2:'#f7e5e2'},
-  sage:{name:'Sage & Ivory',hdr:'#5c6f52',bg:'#f7f8f2',bg2:'#fff',bg3:'#eaeee0',text:'#2a3324',text2:'#7a8a6c',text3:'#a8b89c',accent:'#b08850',accent2:'#f3ecd8',border:'#dde4cc',border2:'#e8edd8'},
-  midnight:{name:'Midnight & Gold',hdr:'#1a1a2e',bg:'#f5f4f0',bg2:'#fff',bg3:'#e8e6e0',text:'#1a1a2e',text2:'#6a6a80',text3:'#a0a0b0',accent:'#c9a84c',accent2:'#f5edd0',border:'#ddd8e8',border2:'#e8e4f0'},
-  dustyblue:{name:'Dusty Blue & Ivory',hdr:'#4a6178',bg:'#f5f7f9',bg2:'#fff',bg3:'#e6ebf0',text:'#22303d',text2:'#7488a0',text3:'#a8bcd0',accent:'#c0936a',accent2:'#f5e8da',border:'#d0dce8',border2:'#e0e8f0'},
-  terracotta:{name:'Terracotta & Clay',hdr:'#a8533a',bg:'#fbf5f0',bg2:'#fff',bg3:'#f4e4d8',text:'#3a2014',text2:'#a87a60',text3:'#c8a890',accent:'#7a8a5c',accent2:'#e8edd8',border:'#f0d4c0',border2:'#f5e2d2'},
-  lavender:{name:'Lavender & Pearl',hdr:'#6c5a82',bg:'#f8f6fa',bg2:'#fff',bg3:'#ece6f2',text:'#2e2438',text2:'#8a7a98',text3:'#b8a8c8',accent:'#c9963b',accent2:'#fbf0db',border:'#ddd4e8',border2:'#e8e2f0'},
-  forest:{name:'Forest & Brass',hdr:'#2e4030',bg:'#f4f6f2',bg2:'#fff',bg3:'#e2e8de',text:'#16201a',text2:'#5c7458',text3:'#94a890',accent:'#b88a3e',accent2:'#f5ead0',border:'#d0dccc',border2:'#e2e8dc'},
-  rosewine:{name:'Rosewine & Cream',hdr:'#6b2c39',bg:'#fbf5f4',bg2:'#fff',bg3:'#f0dcdc',text:'#34141a',text2:'#8a5c64',text3:'#c09098',accent:'#c9963b',accent2:'#fbf0db',border:'#eccccc',border2:'#f4dcdc'}
-};
-var WP_FONTS={
-  'Cormorant Garamond':"'Cormorant Garamond',Georgia,serif",
-  'EB Garamond':"'EB Garamond',Georgia,serif",
-  'Playfair Display':"'Playfair Display',Georgia,serif",
-  'Libre Baskerville':"'Libre Baskerville',Georgia,serif",
-  'Lato':"'Lato',Arial,sans-serif"
-};
-function applyWPTheme(key){
-  var t=WP_THEMES[key];if(!t)return;
-  var r=document.documentElement.style;
-  r.setProperty('--hdr',t.hdr);
-  r.setProperty('--bg',t.bg);r.setProperty('--bg2',t.bg2);r.setProperty('--bg3',t.bg3);
-  r.setProperty('--text',t.text);r.setProperty('--text2',t.text2);r.setProperty('--text3',t.text3);
-  r.setProperty('--accent',t.accent);r.setProperty('--accent2',t.accent2);
-  r.setProperty('--border',t.border);r.setProperty('--border2',t.border2);
-  var mc=document.getElementById('meta-theme-color');if(mc)mc.setAttribute('content',t.hdr);
-  DB.theme=key;sv();renderWPSwatches();
-}
-function applyWPFont(name){
-  var stack=WP_FONTS[name]||WP_FONTS['Cormorant Garamond'];
-  document.body.style.fontFamily=stack;
-  DB.font=name;sv();
-  var el=document.getElementById('s-font');if(el)el.value=name;
-}
-function renderWPSwatches(){
-  var el=document.getElementById('wp-theme-swatches');if(!el)return;
-  var keys=Object.keys(WP_THEMES);var h='';
-  for(var i=0;i<keys.length;i++){
-    var k=keys[i];var t=WP_THEMES[k];
-    var active=DB.theme===k;
-    h+='<div data-tk="'+k+'" class="theme-swatch" style="background:'+(active?t.bg3:t.bg2)+';border:1.5px solid '+(active?t.accent:t.border)+';">';
-    h+='<div style="width:32px;height:32px;border-radius:50%;background:'+t.hdr+';flex-shrink:0;border:3px solid '+t.accent+';"></div>';
-    h+='<div style="font-size:15px;color:var(--text);">'+t.name+'</div>';
-    if(active){h+='<div style="margin-left:auto;font-size:12px;font-weight:700;color:'+t.accent+';">&#10003;</div>';}
-    h+='</div>';
+  function sv() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }
+    catch (e) { showToast("Could not save — storage may be full."); }
   }
-  el.innerHTML=h;
-  el.onclick=function(e){var sw=e.target.closest('.theme-swatch');if(sw&&sw.dataset.tk)applyWPTheme(sw.dataset.tk);};
-}
 
-/* ── SETUP ── */
-function renderSetup(){
-  renderWPSwatches();
-  renderGdriveSection();
-  var sf=document.getElementById('s-font');if(sf&&DB.font)sf.value=DB.font;
-  document.getElementById('s-p1').value=DB.profile.p1||'';
-  document.getElementById('s-p2').value=DB.profile.p2||'';
-  document.getElementById('s-date').value=DB.profile.date||'';
-  document.getElementById('s-budget').value=DB.profile.budget||'';
-}
-function saveProfile(){
-  DB.profile.p1=document.getElementById('s-p1').value.trim();
-  DB.profile.p2=document.getElementById('s-p2').value.trim();
-  DB.profile.date=document.getElementById('s-date').value;
-  DB.profile.budget=document.getElementById('s-budget').value;
-  sv();renderDash();showToast('Saved ✓');
-}
-
-/* ── TOAST ── */
-function showToast(msg, isErr){
-  var t=document.getElementById('mfs-wp-toast');
-  if(!t){
-    t=document.createElement('div');
-    t.id='mfs-wp-toast';
-    t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--hdr);color:#fff;padding:10px 22px;border-radius:20px;font-size:14px;opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap;font-family:"Lato",sans-serif;';
-    document.body.appendChild(t);
+  function todayKey(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   }
-  t.textContent=msg;
-  t.style.background=isErr?'var(--red)':'var(--hdr)';
-  void t.offsetWidth;
-  t.style.opacity='1';
-  t.style.transform='translateX(-50%) translateY(0)';
-  clearTimeout(t._tmr);
-  t._tmr=setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},2500);
-}
-
-/* ── CONFIRM MODAL ── */
-var _spConfirmCb=null;
-function spConfirm(title, sub, cb){
-  var overlay=document.getElementById('spConfirmOverlay');
-  if(!overlay){
-    overlay=document.createElement('div');
-    overlay.id='spConfirmOverlay';
-    overlay.className='modal-bg';
-    overlay.innerHTML='<div class="modal" style="text-align:center;">'
-      +'<h2 id="spConfirmTitle">Delete this entry?</h2>'
-      +'<div id="spConfirmSub" style="font-size:14px;color:var(--text2);margin-bottom:20px;">This cannot be undone.</div>'
-      +'<div class="btn-row">'
-      +'<button class="btn-cancel" onclick="spConfirmClose()">Keep it</button>'
-      +'<button class="btn-delete" style="margin-top:0;flex:1;" onclick="spConfirmOk()">Delete</button>'
-      +'</div></div>';
-    document.body.appendChild(overlay);
+  function computeStreakInfo() {
+    const activeDays = new Set(Object.keys(DB.dailyEntries));
+    let current = 0;
+    const cursor = new Date();
+    while (activeDays.has(todayKey(cursor))) { current += 1; cursor.setDate(cursor.getDate() - 1); }
+    return { current };
   }
-  document.getElementById('spConfirmTitle').textContent=title||'Delete this entry?';
-  document.getElementById('spConfirmSub').textContent=sub||'This cannot be undone.';
-  _spConfirmCb=cb;
-  overlay.classList.add('open');
-}
-function spConfirmClose(){
-  document.getElementById('spConfirmOverlay').classList.remove('open');
-  _spConfirmCb=null;
-}
-function spConfirmOk(){
-  document.getElementById('spConfirmOverlay').classList.remove('open');
-  if(_spConfirmCb)_spConfirmCb();
-  _spConfirmCb=null;
-}
 
-/* ── EXPORT / IMPORT ── */
-function exportData(){
-  var d=JSON.stringify(DB,null,2);
-  var filename='wedding-planner-backup-'+new Date().toISOString().slice(0,10)+'.json';
-  try{
-    var b=new Blob([d],{type:'application/json'});
-    var u=URL.createObjectURL(b);
-    var a=document.createElement('a');
-    a.href=u;a.download=filename;
-    document.body.appendChild(a);a.click();
-    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(u);},100);
-    showToast('Backup downloaded!');
-  }catch(e){
-    showToast('Export failed - try a different browser',true);
-  }
-}
-function importData(){
-  var inp=document.createElement('input');
-  inp.type='file';inp.accept='.json,application/json';
-  inp.onchange=function(e){
-    var f=e.target.files[0];
-    if(!f){showToast('No file selected',true);return;}
-    var r=new FileReader();
-    r.onload=function(ev){
-      try{
-        var p=JSON.parse(ev.target.result);
-        if(!p.guests){showToast('Invalid backup file',true);return;}
-        DB=p;sv();
-        showToast('Data restored!');
-        setTimeout(function(){location.reload();},1500);
-      }catch(er){showToast('Could not read file',true);}
-    };
-    r.readAsText(f);
+  /* =========================================================
+     THEME — 4 dark, 4 light, evening-associated palette
+     ========================================================= */
+  const THEME_COLORS = {
+    midnight: "#1a1638", eclipse: "#161a1e", plum: "#2a1622", onyx: "#14161c",
+    twilight: "#e4e0f5", candlelight: "#f7ead2", dusk: "#f5e4ea", mist: "#e6eef2"
   };
-  document.body.appendChild(inp);
-  inp.click();
-  setTimeout(function(){document.body.removeChild(inp);},60000);
-}
-
-/* ── GOOGLE DRIVE BACKUP ── */
-const GDRIVE_CLIENT_ID = '636576283764-urkn6im4r86n5q4u3iokmska4ejid9o9.apps.googleusercontent.com';
-const GDRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
-const GDRIVE_FILENAME = 'wedding-planner-backup.json';
-var _gdriveToken = null;
-var _gdriveTokenClient = null;
-var _gdriveBackupTimer = null;
-
-function gdriveInit() {
-  if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
-    setTimeout(gdriveInit, 500);
-    return;
+  const THEMES = ["midnight", "eclipse", "plum", "onyx", "twilight", "candlelight", "dusk", "mist"];
+  function applyTheme() {
+    document.body.setAttribute("data-theme", DB.theme);
+    const meta = document.getElementById("theme-color-meta");
+    if (meta) meta.setAttribute("content", THEME_COLORS[DB.theme]);
   }
-  _gdriveTokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: GDRIVE_CLIENT_ID,
-    scope: GDRIVE_SCOPE,
-    callback: function(resp) {
-      if (resp.access_token) {
-        _gdriveToken = resp.access_token;
-        localStorage.setItem('mfs_wp_gdrive_connected', '1');
-        gdriveBackupNow().catch(function(e){ console.error('Initial Drive backup failed:', e); });
-        renderGdriveSection();
-        showToast('Google Drive connected!');
-      }
-    }
-  });
-}
-function gdriveConnect() {
-  if (_gdriveTokenClient) { _gdriveTokenClient.requestAccessToken(); return; }
-  var attempts = 0;
-  var waitForClient = setInterval(function(){
-    attempts++;
-    if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
-      clearInterval(waitForClient);
-      if (!_gdriveTokenClient) gdriveInit();
-      setTimeout(function(){ if (_gdriveTokenClient) _gdriveTokenClient.requestAccessToken(); }, 100);
-    } else if (attempts > 40) {
-      clearInterval(waitForClient);
-      showToast('Could not load Google Drive. Check your connection.', true);
-    }
-  }, 500);
-}
-function gdriveDisconnect() {
-  _gdriveToken = null;
-  localStorage.removeItem('mfs_wp_gdrive_connected');
-  showToast('Google Drive disconnected.');
-  renderGdriveSection();
-}
-function gdriveIsConnected() { return !!_gdriveToken; }
-async function gdriveFindFile() {
-  if (!_gdriveToken) return null;
-  var res = await fetch('https://www.googleapis.com/drive/v3/files?q=name%3D%27' + GDRIVE_FILENAME + '%27%20and%20trashed%3Dfalse&spaces=drive', {
-    headers: { 'Authorization': 'Bearer ' + _gdriveToken }
-  });
-  var data = await res.json();
-  return (data.files && data.files[0]) ? data.files[0].id : null;
-}
-async function gdriveBackupNow() {
-  if (!_gdriveToken) throw new Error('Not connected to Google Drive');
-  var fileId = await gdriveFindFile();
-  var content = JSON.stringify(DB);
-  var metadata = { name: GDRIVE_FILENAME, mimeType: 'application/json' };
-  var boundary = '-------mfs' + Date.now();
-  var body = '--' + boundary + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(metadata) +
-    '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' + content + '\r\n--' + boundary + '--';
-  var url = fileId
-    ? 'https://www.googleapis.com/upload/drive/v3/files/' + fileId + '?uploadType=multipart'
-    : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
-  var method = fileId ? 'PATCH' : 'POST';
-  var res = await fetch(url, {
-    method: method,
-    headers: { 'Authorization': 'Bearer ' + _gdriveToken, 'Content-Type': 'multipart/related; boundary=' + boundary },
-    body: body
-  });
-  if (!res.ok) {
-    var errBody = null;
-    try { errBody = await res.json(); } catch(e) {}
-    var msg = (errBody && errBody.error && errBody.error.message) || ('Drive returned an error (' + res.status + ')');
-    if (res.status === 401) { _gdriveToken = null; }
-    throw new Error(msg);
+  function cycleTheme() {
+    const idx = THEMES.indexOf(DB.theme);
+    DB.theme = THEMES[(idx + 1) % THEMES.length];
+    sv(); applyTheme();
+    showToast(`Theme: ${DB.theme[0].toUpperCase() + DB.theme.slice(1)}`);
   }
-}
-async function gdriveRestore() {
-  if (!_gdriveToken) { showToast('Connect Google Drive first.', true); return; }
-  try {
-    var fileId = await gdriveFindFile();
-    if (!fileId) { showToast('No backup found in your Google Drive yet.', true); return; }
-    var res = await fetch('https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media', {
-      headers: { 'Authorization': 'Bearer ' + _gdriveToken }
+
+  /* =========================================================
+     TOAST
+     ========================================================= */
+  let toastTimer = null;
+  function showToast(message, actionLabel, onAction) {
+    const el = document.getElementById("toast");
+    el.textContent = message;
+    if (actionLabel && onAction) {
+      const actionEl = document.createElement("span");
+      actionEl.className = "toast-action";
+      actionEl.textContent = actionLabel;
+      actionEl.addEventListener("click", () => { onAction(); el.classList.remove("show"); });
+      el.appendChild(actionEl);
+    }
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), actionLabel ? 5000 : 2200);
+  }
+
+  /* =========================================================
+     SHARED MODAL
+     ========================================================= */
+  function openModal({ title, bodyText, ctaLabel, onCta, secondaryLabel, onSecondary }) {
+    document.getElementById("modal-title").textContent = title || "";
+    const bodyEl = document.getElementById("modal-body-text");
+    bodyEl.textContent = bodyText || "";
+    bodyEl.style.display = bodyText ? "block" : "none";
+    const ctaBtn = document.getElementById("modal-cta-btn");
+    if (ctaLabel) { ctaBtn.style.display = "block"; ctaBtn.textContent = ctaLabel; ctaBtn.onclick = onCta || null; }
+    else { ctaBtn.style.display = "none"; ctaBtn.onclick = null; }
+    const secondaryBtn = document.getElementById("modal-secondary-btn");
+    if (secondaryLabel) { secondaryBtn.style.display = "block"; secondaryBtn.textContent = secondaryLabel; secondaryBtn.onclick = onSecondary || closeModal; }
+    else { secondaryBtn.style.display = "none"; secondaryBtn.onclick = null; }
+    document.getElementById("app-modal").classList.add("open");
+  }
+  function closeModal() { document.getElementById("app-modal").classList.remove("open"); }
+
+  /* =========================================================
+     MOONRISE ARC (signature element) — same arc geometry as
+     the Morning app's Sunrise Arc, but the glow settles toward
+     the horizon as the routine completes, rather than rising —
+     winding down instead of energizing.
+     ========================================================= */
+  function renderMoonArc(score) {
+    const angleDeg = 180 - (score / 100) * 180;
+    const angleRad = (angleDeg * Math.PI) / 180;
+    const cx = 48, cy = 52, r = 42;
+    const x = cx + r * Math.cos(angleRad);
+    const y = cy - r * Math.sin(angleRad);
+    const glow = document.getElementById("moon-glow");
+    glow.setAttribute("cx", x.toFixed(1));
+    glow.setAttribute("cy", y.toFixed(1));
+
+    const labelEl = document.getElementById("moon-label");
+    const subEl = document.getElementById("moon-sub");
+    if (score === 0) { labelEl.textContent = "Not yet wound down"; subEl.textContent = "Fill in tonight's routine to settle in."; }
+    else if (score < 40) { labelEl.textContent = "Beginning to settle"; subEl.textContent = "The day is starting to loosen its grip."; }
+    else if (score < 80) { labelEl.textContent = "Settling in"; subEl.textContent = "You're winding down nicely."; }
+    else { labelEl.textContent = "At rest"; subEl.textContent = "A complete, gentle close to the day."; }
+  }
+
+  /* =========================================================
+     TODAY / FORM
+     ========================================================= */
+  function computeTodayScore(entry) {
+    if (!entry) return 0;
+    return Math.round((FIELDS.filter((f) => entry[f]).length / FIELDS.length) * 100);
+  }
+
+  function render() {
+    const key = todayKey(new Date());
+    const entry = DB.dailyEntries[key];
+    const score = computeTodayScore(entry);
+
+    renderMoonArc(score);
+
+    const { current } = computeStreakInfo();
+    document.getElementById("stat-streak").textContent = current;
+    document.getElementById("stat-days").textContent = Object.keys(DB.dailyEntries).length;
+    document.getElementById("stat-today").textContent = entry ? score : "—";
+
+    const formCard = document.getElementById("form-card");
+    const summaryCard = document.getElementById("summary-card");
+    if (entry) {
+      formCard.style.display = "none";
+      summaryCard.style.display = "block";
+      document.getElementById("score-bar").style.width = `${score}%`;
+      document.getElementById("score-text").textContent = `${score}/100`;
+      renderTodaySummary(entry);
+    } else {
+      formCard.style.display = "block";
+      summaryCard.style.display = "none";
+      clearForm();
+    }
+  }
+
+  function renderTodaySummary(entry) {
+    const rows = [
+      ["Releasing", entry.release], ["Gratitude", entry.gratitude], ["Emotion", entry.emotion],
+      ["Ritual", entry.ritual], ["Tomorrow", entry.tomorrow], ["Affirmation", entry.affirmation]
+    ];
+    const bodyEl = document.getElementById("today-summary-body");
+    bodyEl.innerHTML = rows.map(([label]) => `
+      <div class="today-summary-row"><div class="today-summary-label">${label}</div><div class="today-summary-value" data-field="${label}"></div></div>
+    `).join("");
+    bodyEl.querySelectorAll("[data-field]").forEach((el) => {
+      const match = rows.find(([label]) => label === el.dataset.field);
+      el.textContent = match && match[1] ? match[1] : "—";
     });
-    if (!res.ok) {
-      if (res.status === 401) _gdriveToken = null;
-      throw new Error('Drive returned an error (' + res.status + ')');
-    }
-    var data = await res.json();
-    if (!data || !data.guests) { showToast('Backup file looks invalid.', true); return; }
-    DB = data;
-    sv();
-    showToast('Restored from Google Drive!');
-    setTimeout(function(){ location.reload(); }, 1500);
-  } catch(e) {
-    showToast('Restore failed: ' + e.message, true);
   }
-}
-function renderGdriveSection(){
-  var el=document.getElementById('gdrive-section');if(!el)return;
-  var connected = localStorage.getItem('mfs_wp_gdrive_connected')==='1';
-  if(connected && !_gdriveToken){
-    el.innerHTML='<div style="font-size:14px;color:var(--text2);line-height:1.6;">Reconnecting to Google Drive...</div>';
-    if(_gdriveTokenClient){_gdriveTokenClient.requestAccessToken({prompt:''});}
-    return;
-  }
-  if(!connected){
-    el.innerHTML='<div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:14px">Back up your guest list, budget, and vendors to your own Google Drive. Your data stays in your account — we never see it.</div>'
-      +'<button class="btn-full" onclick="gdriveConnect()">Connect Google Drive</button>';
-    return;
-  }
-  el.innerHTML='<div class="card-accent" style="margin-bottom:10px"><div style="font-size:14px;color:var(--accent);">&check; Connected to Google Drive</div></div>'
-    +'<button class="btn-full" onclick="gdriveBackupNow().then(function(){showToast(\'Backed up to Google Drive!\')}).catch(function(e){showToast(\'Backup failed: \'+e.message, true)})">Back up now</button>'
-    +'<button class="btn-ghost" onclick="gdriveRestore()">Restore from Drive</button>'
-    +'<button class="btn-delete" onclick="gdriveDisconnect()">Disconnect</button>';
-}
 
-/* ── INIT ── */
-setTimeout(function(){if(typeof gdriveInit==='function')gdriveInit();},500);
-if(DB.theme)applyWPTheme(DB.theme);
-if(DB.font)applyWPFont(DB.font);
-renderDash();
-renderSetup();
+  function clearForm() {
+    ["f-release", "f-gratitude", "f-emotion", "f-ritual", "f-tomorrow", "f-affirmation"].forEach((id) => { document.getElementById(id).value = ""; });
+  }
+
+  function loadTodayIntoForm() {
+    const entry = DB.dailyEntries[todayKey(new Date())];
+    if (!entry) { clearForm(); return; }
+    document.getElementById("f-release").value = entry.release || "";
+    document.getElementById("f-gratitude").value = entry.gratitude || "";
+    document.getElementById("f-emotion").value = entry.emotion || "";
+    document.getElementById("f-ritual").value = entry.ritual || "";
+    document.getElementById("f-tomorrow").value = entry.tomorrow || "";
+    document.getElementById("f-affirmation").value = entry.affirmation || "";
+  }
+
+  function saveRoutine() {
+    const entry = {
+      release: document.getElementById("f-release").value.trim(),
+      gratitude: document.getElementById("f-gratitude").value.trim(),
+      emotion: document.getElementById("f-emotion").value.trim(),
+      ritual: document.getElementById("f-ritual").value.trim(),
+      tomorrow: document.getElementById("f-tomorrow").value.trim(),
+      affirmation: document.getElementById("f-affirmation").value.trim()
+    };
+    if (!Object.values(entry).some(Boolean)) { showToast("Fill in at least one field before saving."); return; }
+    DB.dailyEntries[todayKey(new Date())] = { ...entry, loggedAt: new Date().toISOString() };
+    sv();
+    showToast("Tonight's routine saved.");
+    render();
+  }
+
+  function editToday() {
+    document.getElementById("form-card").style.display = "block";
+    document.getElementById("summary-card").style.display = "none";
+    loadTodayIntoForm();
+  }
+
+  /* =========================================================
+     GOOGLE DRIVE BACKUP + LOCAL EXPORT/IMPORT
+     ========================================================= */
+  const GOOGLE_CLIENT_ID = "636576283764-urkn6im4r86n5q4u3iokmska4ejid9o9.apps.googleusercontent.com";
+  const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
+  const DRIVE_LIVE_FILENAME = "evening-wind-down-routine-backup-live.json";
+  const DRIVE_SNAPSHOT_PREFIX = "evening-wind-down-routine-backup-";
+  const MAX_SNAPSHOTS = 7;
+
+  const DRIVE_KEYS = { connected: "ewdc_drive_connected", lastSynced: "ewdc_drive_last_synced", preRestoreSnapshot: "ewdc_pre_restore_snapshot" };
+
+  let driveTokenClient = null;
+  let driveAccessToken = null;
+
+  function initGoogleDriveClient() {
+    if (typeof google === "undefined" || !google.accounts || !google.accounts.oauth2) return;
+    driveTokenClient = google.accounts.oauth2.initTokenClient({ client_id: GOOGLE_CLIENT_ID, scope: DRIVE_SCOPE, callback: () => {} });
+  }
+  function requestDriveToken(onGranted, onError) {
+    if (!driveTokenClient) initGoogleDriveClient();
+    if (!driveTokenClient) { onError(new Error("Google Drive isn't available right now. Check your connection and reload.")); return; }
+    driveTokenClient.callback = (response) => {
+      if (response.error) { onError(new Error("Google Drive access was not granted.")); return; }
+      driveAccessToken = response.access_token;
+      onGranted();
+    };
+    driveTokenClient.requestAccessToken({ prompt: driveAccessToken ? "" : "consent" });
+  }
+  function isDriveConnected() { return localStorage.getItem(DRIVE_KEYS.connected) === "true"; }
+  function setDriveConnected(connected) {
+    if (connected) localStorage.setItem(DRIVE_KEYS.connected, "true");
+    else localStorage.removeItem(DRIVE_KEYS.connected);
+    updateDriveStatusUI();
+  }
+  function getLastSyncedLabel() {
+    const iso = localStorage.getItem(DRIVE_KEYS.lastSynced);
+    if (!iso) return "Never backed up";
+    const date = new Date(iso);
+    return `Last backed up ${date.toLocaleDateString(undefined, { month: "short", day: "numeric" })} at ${date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}`;
+  }
+  function updateDriveStatusUI() {
+    const connected = isDriveConnected();
+    document.getElementById("drive-status-text").textContent = connected ? "Google Drive connected" : "Google Drive not connected";
+    document.getElementById("drive-status-sub").textContent = connected ? getLastSyncedLabel() : "Your data stays on this device until you connect.";
+    const badge = document.getElementById("drive-badge");
+    badge.textContent = connected ? "On" : "Off";
+    badge.classList.toggle("connected", connected);
+    badge.classList.toggle("disconnected", !connected);
+    document.getElementById("drive-connect-btn").style.display = connected ? "none" : "block";
+    document.getElementById("drive-backup-btn").disabled = !connected;
+    document.getElementById("drive-restore-btn").disabled = !connected;
+    document.getElementById("drive-disconnect-btn").disabled = !connected;
+  }
+
+  async function driveFindFileByName(name) {
+    const query = encodeURIComponent(`name='${name.replace(/'/g, "\\'")}' and trashed=false`);
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&spaces=drive&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc`, { headers: { Authorization: `Bearer ${driveAccessToken}` } });
+    if (!res.ok) throw new Error(`Google Drive lookup failed (${res.status}).`);
+    return (await res.json()).files || [];
+  }
+  async function driveFindFilesByPrefix(prefix) {
+    const query = encodeURIComponent(`name contains '${prefix}' and trashed=false`);
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&spaces=drive&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc`, { headers: { Authorization: `Bearer ${driveAccessToken}` } });
+    if (!res.ok) throw new Error(`Google Drive lookup failed (${res.status}).`);
+    return (await res.json()).files || [];
+  }
+  async function driveCreateFile(name, content) {
+    const boundary = "ewdc_boundary_" + Date.now();
+    const metadata = { name, mimeType: "application/json" };
+    const body = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${content}\r\n--${boundary}--`;
+    const res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart", {
+      method: "POST", headers: { Authorization: `Bearer ${driveAccessToken}`, "Content-Type": `multipart/related; boundary=${boundary}` }, body
+    });
+    if (!res.ok) throw new Error(`Google Drive upload failed (${res.status}).`);
+    return res.json();
+  }
+  async function driveUpdateFile(id, content) {
+    const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=media`, {
+      method: "PATCH", headers: { Authorization: `Bearer ${driveAccessToken}`, "Content-Type": "application/json" }, body: content
+    });
+    if (!res.ok) throw new Error(`Google Drive update failed (${res.status}).`);
+    return res.json();
+  }
+  async function driveDownloadFile(id) {
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${id}?alt=media`, { headers: { Authorization: `Bearer ${driveAccessToken}` } });
+    if (!res.ok) throw new Error(`Could not download the Drive backup (${res.status}).`);
+    return res.text();
+  }
+  async function driveDeleteFile(id) {
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${driveAccessToken}` } });
+    if (!res.ok && res.status !== 404) throw new Error(`Could not clean up an old Drive snapshot (${res.status}).`);
+  }
+
+  function buildBackupPayload() {
+    return JSON.stringify({ ...DB, exportedAt: new Date().toISOString(), source: "Spiritual Evening Routine (Advanced)" }, null, 2);
+  }
+
+  async function backupToDrive() {
+    const btn = document.getElementById("drive-backup-btn");
+    btn.disabled = true; btn.textContent = "Backing up…";
+    requestDriveToken(async () => {
+      try {
+        const payload = buildBackupPayload();
+        const liveMatches = await driveFindFileByName(DRIVE_LIVE_FILENAME);
+        if (liveMatches.length) await driveUpdateFile(liveMatches[0].id, payload);
+        else await driveCreateFile(DRIVE_LIVE_FILENAME, payload);
+
+        const todaySnapshotName = `${DRIVE_SNAPSHOT_PREFIX}${todayKey(new Date())}.json`;
+        const todayMatches = await driveFindFileByName(todaySnapshotName);
+        if (todayMatches.length) await driveUpdateFile(todayMatches[0].id, payload);
+        else await driveCreateFile(todaySnapshotName, payload);
+
+        const allSnapshots = (await driveFindFilesByPrefix(DRIVE_SNAPSHOT_PREFIX)).filter((f) => f.name !== DRIVE_LIVE_FILENAME);
+        const toDelete = allSnapshots.slice(MAX_SNAPSHOTS);
+        for (const file of toDelete) await driveDeleteFile(file.id);
+
+        localStorage.setItem(DRIVE_KEYS.lastSynced, new Date().toISOString());
+        setDriveConnected(true);
+        showToast("Backed up to Google Drive.");
+      } catch (err) {
+        showToast(err.message || "Backup failed. Please try again.");
+      } finally {
+        btn.disabled = !isDriveConnected();
+        btn.textContent = "Back up now";
+      }
+    }, (err) => { showToast(err.message); btn.disabled = !isDriveConnected(); btn.textContent = "Back up now"; });
+  }
+
+  async function restoreFromDrive() {
+    const btn = document.getElementById("drive-restore-btn");
+    btn.disabled = true; btn.textContent = "Checking Drive…";
+    requestDriveToken(async () => {
+      try {
+        const matches = await driveFindFileByName(DRIVE_LIVE_FILENAME);
+        if (!matches.length) { showToast("No backup found in Google Drive yet."); return; }
+        const raw = await driveDownloadFile(matches[0].id);
+        let parsed;
+        try { parsed = JSON.parse(raw); }
+        catch (e) { showToast("The Drive backup file looks corrupted."); return; }
+        confirmAndApplyRestore(parsed, matches[0].modifiedTime, "Google Drive");
+      } catch (err) {
+        showToast(err.message || "Could not restore from Google Drive.");
+      } finally {
+        btn.disabled = !isDriveConnected();
+        btn.textContent = "Restore from Drive";
+      }
+    }, (err) => { showToast(err.message); btn.disabled = !isDriveConnected(); btn.textContent = "Restore from Drive"; });
+  }
+
+  function connectDrive() { requestDriveToken(() => { setDriveConnected(true); showToast("Google Drive connected."); }, (err) => showToast(err.message)); }
+  function disconnectDrive() {
+    driveAccessToken = null;
+    setDriveConnected(false);
+    showToast("Google Drive disconnected. Your local data is unchanged.");
+  }
+
+  function confirmAndApplyRestore(parsed, sourceDate, sourceLabel) {
+    const incomingDays = parsed.dailyEntries && typeof parsed.dailyEntries === "object" ? Object.keys(parsed.dailyEntries).length : 0;
+    const currentDays = Object.keys(DB.dailyEntries).length;
+    const dateLabel = sourceDate ? new Date(sourceDate).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "an earlier backup";
+
+    openModal({
+      title: `Restore from ${sourceLabel}`,
+      bodyText: `This replaces ${currentDays} logged ${currentDays === 1 ? "night" : "nights"} on this device with ${incomingDays} ${incomingDays === 1 ? "night" : "nights"} from a backup made ${dateLabel}. You'll be able to undo this immediately after.`,
+      ctaLabel: "Restore backup",
+      onCta: () => { applyRestoredData(parsed); closeModal(); },
+      secondaryLabel: "Cancel", onSecondary: closeModal
+    });
+  }
+
+  function applyRestoredData(parsed) {
+    localStorage.setItem(DRIVE_KEYS.preRestoreSnapshot, JSON.stringify({ data: DB, savedAt: new Date().toISOString() }));
+    DB = Object.assign(defaultDB(), parsed);
+    sv();
+    applyTheme();
+    render();
+    showToast("Backup restored.", "Undo", undoRestore);
+  }
+
+  function undoRestore() {
+    const raw = localStorage.getItem(DRIVE_KEYS.preRestoreSnapshot);
+    if (!raw) { showToast("Nothing to undo."); return; }
+    try {
+      const snap = JSON.parse(raw);
+      DB = Object.assign(defaultDB(), snap.data);
+      sv();
+      localStorage.removeItem(DRIVE_KEYS.preRestoreSnapshot);
+      applyTheme();
+      render();
+      showToast("Restore undone.");
+    } catch (e) {
+      showToast("Could not undo — the previous snapshot was unreadable.");
+    }
+  }
+
+  function exportBackupFile() {
+    const payload = buildBackupPayload();
+    const blob = new Blob([payload], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `evening-wind-down-routine-backup-${todayKey(new Date())}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast("Backup file downloaded.");
+  }
+  function triggerImportPicker() { document.getElementById("import-file-input").click(); }
+  function handleImportFileChange(event) {
+    const file = event.target.files[0];
+    event.target.value = "";
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      let parsed;
+      try { parsed = JSON.parse(reader.result); }
+      catch (e) { showToast("This file is not a valid backup."); return; }
+      if (!parsed || typeof parsed !== "object") { showToast("This file is not a valid backup."); return; }
+      confirmAndApplyRestore(parsed, parsed.exportedAt, "file");
+    };
+    reader.onerror = () => showToast("Could not read that file.");
+    reader.readAsText(file);
+  }
+
+  /* =========================================================
+     INIT + EVENT WIRING
+     ========================================================= */
+  document.addEventListener("DOMContentLoaded", () => {
+    ld();
+    applyTheme();
+    render();
+
+    document.getElementById("theme-btn").addEventListener("click", cycleTheme);
+    document.getElementById("save-btn").addEventListener("click", saveRoutine);
+    document.getElementById("edit-today-btn").addEventListener("click", editToday);
+
+    document.getElementById("modal-close-btn").addEventListener("click", closeModal);
+    document.getElementById("app-modal").addEventListener("click", (e) => { if (e.target.id === "app-modal") closeModal(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+
+    initGoogleDriveClient();
+    updateDriveStatusUI();
+    document.getElementById("drive-connect-btn").addEventListener("click", connectDrive);
+    document.getElementById("drive-backup-btn").addEventListener("click", backupToDrive);
+    document.getElementById("drive-restore-btn").addEventListener("click", restoreFromDrive);
+    document.getElementById("drive-disconnect-btn").addEventListener("click", disconnectDrive);
+    document.getElementById("export-btn").addEventListener("click", exportBackupFile);
+    document.getElementById("import-btn").addEventListener("click", triggerImportPicker);
+    document.getElementById("import-file-input").addEventListener("change", handleImportFileChange);
+  });
 </script>
+
 </body>
 </html>
