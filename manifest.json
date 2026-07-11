@@ -1,15 +1,25 @@
 {
-  "name": "Wedding Planner — Mobile First Studio",
-  "short_name": "Wedding Planner",
-  "description": "Your wedding, beautifully organized — guest list, budget, vendors, and timeline in one app.",
+  "name": "Spiritual Evening Routine",
+  "short_name": "Evening Routine",
+  "description": "A gentle wind-down routine for releasing the day, gratitude, an emotional check-in, a wind-down ritual, tomorrow's focus, and a sleep affirmation, with 8 evening-toned color themes.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#fdf6f3",
-  "theme_color": "#a4677a",
+  "background_color": "#e4e0f5",
+  "theme_color": "#7c68c9",
   "orientation": "portrait",
   "icons": [
-    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }
