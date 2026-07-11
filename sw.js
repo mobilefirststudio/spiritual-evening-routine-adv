@@ -1,27 +1,48 @@
-const CACHE = 'wedding-planner-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE_NAME = "spiritual-evening-routine-8themes-v1";
+const APP_SHELL = [
+  "/",
+  "/index.html",
+  "/manifest.json"
+];
 
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
+// Install: pre-cache the app shell
+self.addEventListener("install", (event) => {
   self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).catch(() => {})
+  );
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-  ));
+// Activate: clean up any old cache versions
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      )
+    )
+  );
   self.clients.claim();
 });
 
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  e.respondWith(
-    fetch(e.request).then(r => {
-      if (r && r.status === 200 && r.type === 'basic') {
-        const c = r.clone();
-        caches.open(CACHE).then(cache => cache.put(e.request, c));
-      }
-      return r;
-    }).catch(() => caches.match(e.request))
+// Fetch: cache-first for the app shell, network-first fallback for everything else,
+// so the app still opens offline once it's been loaded at least once.
+self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+
+      return fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200 && response.type === "basic") {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          }
+          return response;
+        })
+        .catch(() => caches.match("/index.html"));
+    })
   );
 });
