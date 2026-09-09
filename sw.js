@@ -1,4 +1,4 @@
-const CACHE_NAME = "spiritual-evening-routine-8themes-v1";
+const CACHE_NAME = "spiritual-evening-routine-8themes-v2";
 const APP_SHELL = [
   "/",
   "/index.html",
