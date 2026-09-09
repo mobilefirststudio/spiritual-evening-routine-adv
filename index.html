@@ -698,6 +698,31 @@
 
   const DRIVE_KEYS = { connected: "ewdc_drive_connected", lastSynced: "ewdc_drive_last_synced", preRestoreSnapshot: "ewdc_pre_restore_snapshot" };
 
+  // Cross-tier fallback: if this tier's own backup isn't found, also check the
+  // Simple tier's backup filename so upgrading/downgrading customers don't
+  // see "no backup found" just because they backed up on the other tier.
+  const SIBLING_DRIVE_LIVE_FILENAME = "spiritual-evening-routine-backup-live.json";
+  // Simple field -> Advanced field. Each Simple field becomes the primary
+  // sub-field of its matching Advanced section; the rest of that section's
+  // sub-fields are left unset since Simple never collected them.
+  const SIBLING_FIELD_MAP = { release: "release", g1: "gratitude", emotion: "emotion", practice: "ritual", focus: "tomorrow", text: "affirmation" };
+
+  function remapFromSibling(parsed) {
+    const sourceEntries = parsed && parsed.dailyEntries && typeof parsed.dailyEntries === "object" ? parsed.dailyEntries : {};
+    const remapped = {};
+    Object.keys(sourceEntries).forEach((dateKey) => {
+      const sourceEntry = sourceEntries[dateKey] || {};
+      const entry = {};
+      Object.keys(SIBLING_FIELD_MAP).forEach((ownField) => {
+        const siblingField = SIBLING_FIELD_MAP[ownField];
+        if (sourceEntry[siblingField]) entry[ownField] = sourceEntry[siblingField];
+      });
+      if (sourceEntry.loggedAt) entry.loggedAt = sourceEntry.loggedAt;
+      if (Object.keys(entry).some((k) => k !== "loggedAt" && entry[k])) remapped[dateKey] = entry;
+    });
+    return { theme: DB.theme, dailyEntries: remapped };
+  }
+
   let driveTokenClient = null;
   let driveAccessToken = null;
 
@@ -820,13 +845,24 @@
     btn.disabled = true; btn.textContent = "Checking Drive…";
     requestDriveToken(async () => {
       try {
-        const matches = await driveFindFileByName(DRIVE_LIVE_FILENAME);
+        let matches = await driveFindFileByName(DRIVE_LIVE_FILENAME);
+        let fromSibling = false;
+        if (!matches.length) {
+          matches = await driveFindFileByName(SIBLING_DRIVE_LIVE_FILENAME);
+          fromSibling = true;
+        }
         if (!matches.length) { showToast("No backup found in Google Drive yet."); return; }
         const raw = await driveDownloadFile(matches[0].id);
         let parsed;
         try { parsed = JSON.parse(raw); }
         catch (e) { showToast("The Drive backup file looks corrupted."); return; }
-        confirmAndApplyRestore(parsed, matches[0].modifiedTime, "Google Drive");
+        if (fromSibling) parsed = remapFromSibling(parsed);
+        confirmAndApplyRestore(
+          parsed,
+          matches[0].modifiedTime,
+          fromSibling ? "Google Drive (Simple version)" : "Google Drive",
+          fromSibling ? "This backup was made in the Simple version of this app, so only your release, gratitude, emotion, ritual, tomorrow, and affirmation entries will carry over — not the expanded sections this version adds." : ""
+        );
       } catch (err) {
         showToast(err.message || "Could not restore from Google Drive.");
       } finally {
@@ -843,14 +879,14 @@
     showToast("Google Drive disconnected. Your local data is unchanged.");
   }
 
-  function confirmAndApplyRestore(parsed, sourceDate, sourceLabel) {
+  function confirmAndApplyRestore(parsed, sourceDate, sourceLabel, extraNote) {
     const incomingDays = parsed.dailyEntries && typeof parsed.dailyEntries === "object" ? Object.keys(parsed.dailyEntries).length : 0;
     const currentDays = Object.keys(DB.dailyEntries).length;
     const dateLabel = sourceDate ? new Date(sourceDate).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "an earlier backup";
 
     openModal({
       title: `Restore from ${sourceLabel}`,
-      bodyText: `This replaces ${currentDays} logged ${currentDays === 1 ? "night" : "nights"} on this device with ${incomingDays} ${incomingDays === 1 ? "night" : "nights"} from a backup made ${dateLabel}. You'll be able to undo this immediately after.`,
+      bodyText: `This replaces ${currentDays} logged ${currentDays === 1 ? "night" : "nights"} on this device with ${incomingDays} ${incomingDays === 1 ? "night" : "nights"} from a backup made ${dateLabel}. You'll be able to undo this immediately after.${extraNote ? " " + extraNote : ""}`,
       ctaLabel: "Restore backup",
       onCta: () => { applyRestoredData(parsed); closeModal(); },
       secondaryLabel: "Cancel", onSecondary: closeModal
