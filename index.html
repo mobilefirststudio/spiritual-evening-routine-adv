@@ -696,7 +696,7 @@
   const DRIVE_SNAPSHOT_PREFIX = "evening-wind-down-system-backup-";
   const MAX_SNAPSHOTS = 7;
 
-  const DRIVE_KEYS = { connected: "ewdc_drive_connected", lastSynced: "ewdc_drive_last_synced", preRestoreSnapshot: "ewdc_pre_restore_snapshot" };
+  const DRIVE_KEYS = { connected: "ewdc_drive_connected", lastSynced: "ewdc_drive_last_synced", preRestoreSnapshot: "ewdc_pre_restore_snapshot", tokenCache: "ewdc_drive_token_cache", everAuthorized: "ewdc_drive_ever_authorized" };
 
   // Cross-tier fallback: if this tier's own backup isn't found, also check the
   // Simple tier's backup filename so upgrading/downgrading customers don't
@@ -730,15 +730,56 @@
     if (typeof google === "undefined" || !google.accounts || !google.accounts.oauth2) return;
     driveTokenClient = google.accounts.oauth2.initTokenClient({ client_id: GOOGLE_CLIENT_ID, scope: DRIVE_SCOPE, callback: () => {} });
   }
+  const TOKEN_EXPIRY_BUFFER_MS = 2 * 60 * 1000; // refresh a couple minutes before actual expiry
+
+  function loadCachedToken() {
+    try {
+      const raw = localStorage.getItem(DRIVE_KEYS.tokenCache);
+      if (!raw) return null;
+      const cached = JSON.parse(raw);
+      if (cached && cached.token && cached.expiresAt && cached.expiresAt - TOKEN_EXPIRY_BUFFER_MS > Date.now()) return cached.token;
+    } catch (e) {}
+    return null;
+  }
+  function cacheToken(token, expiresInSeconds) {
+    try { localStorage.setItem(DRIVE_KEYS.tokenCache, JSON.stringify({ token, expiresAt: Date.now() + (expiresInSeconds || 3600) * 1000 })); }
+    catch (e) {}
+  }
+  function clearCachedToken() { localStorage.removeItem(DRIVE_KEYS.tokenCache); }
+  function hasEverAuthorizedDrive() { return localStorage.getItem(DRIVE_KEYS.everAuthorized) === "true"; }
+  function markEverAuthorizedDrive() { localStorage.setItem(DRIVE_KEYS.everAuthorized, "true"); }
+
   function requestDriveToken(onGranted, onError) {
+    // Reuse a still-valid token (in memory, or cached from an earlier page
+    // load) so repeat backups/restores don't need Google's screen at all.
+    if (!driveAccessToken) driveAccessToken = loadCachedToken();
+    if (driveAccessToken) { onGranted(); return; }
+
     if (!driveTokenClient) initGoogleDriveClient();
     if (!driveTokenClient) { onError(new Error("Google Drive isn't available right now. Check your connection and reload.")); return; }
+
+    // Once you've granted access before on this device, try a silent
+    // reauthorization first — usually no prompt at all — and only fall
+    // back to the full permission screen if that's not possible.
+    const silentFirst = hasEverAuthorizedDrive();
+    let triedSilent = false;
+
     driveTokenClient.callback = (response) => {
-      if (response.error) { onError(new Error("Google Drive access was not granted.")); return; }
+      if (response.error) {
+        if (silentFirst && !triedSilent) {
+          triedSilent = true;
+          driveTokenClient.requestAccessToken({ prompt: "consent" });
+          return;
+        }
+        onError(new Error("Google Drive access was not granted."));
+        return;
+      }
       driveAccessToken = response.access_token;
+      cacheToken(driveAccessToken, response.expires_in);
+      markEverAuthorizedDrive();
       onGranted();
     };
-    driveTokenClient.requestAccessToken({ prompt: driveAccessToken ? "" : "consent" });
+    driveTokenClient.requestAccessToken({ prompt: silentFirst ? "" : "consent" });
   }
   function isDriveConnected() { return localStorage.getItem(DRIVE_KEYS.connected) === "true"; }
   function setDriveConnected(connected) {
@@ -826,7 +867,9 @@
 
         const allSnapshots = (await driveFindFilesByPrefix(DRIVE_SNAPSHOT_PREFIX)).filter((f) => f.name !== DRIVE_LIVE_FILENAME);
         const toDelete = allSnapshots.slice(MAX_SNAPSHOTS);
-        for (const file of toDelete) await driveDeleteFile(file.id);
+        // Run cleanup in parallel and never let a single failed deletion
+        // turn a successful backup into a scary "Backup failed" toast.
+        await Promise.all(toDelete.map((file) => driveDeleteFile(file.id).catch(() => {})));
 
         localStorage.setItem(DRIVE_KEYS.lastSynced, new Date().toISOString());
         setDriveConnected(true);
@@ -875,6 +918,7 @@
   function connectDrive() { requestDriveToken(() => { setDriveConnected(true); showToast("Google Drive connected."); }, (err) => showToast(err.message)); }
   function disconnectDrive() {
     driveAccessToken = null;
+    clearCachedToken();
     setDriveConnected(false);
     showToast("Google Drive disconnected. Your local data is unchanged.");
   }
