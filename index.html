@@ -214,8 +214,9 @@
   .toast {
     position: fixed; bottom: 5.6rem; left: 50%; transform: translateX(-50%) translateY(10px);
     background: var(--card-hi); border: 1px solid var(--border-soft); color: var(--text);
-    font-size: 0.78rem; padding: 0.6rem 1rem; border-radius: 999px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
-    opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; z-index: 1000; white-space: nowrap;
+    font-size: 0.78rem; padding: 0.6rem 1rem; border-radius: 1.1rem; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; z-index: 1000;
+    white-space: normal; text-align: center; max-width: calc(100% - 48px); width: max-content;
     backdrop-filter: blur(8px);
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
